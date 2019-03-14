@@ -1,4 +1,4 @@
-# Welcome to GitHub
+﻿# Welcome to GitHub
 
 캡스톤 팀 생성을 축하합니다.
 
@@ -57,9 +57,9 @@
 
 
 ### 채 승 훈 (팀원)
-* Tel: 010-0000-0000
-* Github: [https://github.com/](https://github.com/)
-* Role :  
+* Tel: 010-7773-6999
+* Github: [https://github.com/SeunghunChae/opencv](https://github.com/SeunghunChae/opencv)
+* Role :  Gui, openCV, 객체탐지 모델 구현
 
 
 
