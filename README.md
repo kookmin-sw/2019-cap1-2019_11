@@ -1,83 +1,83 @@
 # Welcome to GitHub
 
-Ä¸½ºÅæ ÆÀ »ý¼ºÀ» ÃàÇÏÇÕ´Ï´Ù.
+ìº¡ìŠ¤í†¤ íŒ€ ìƒì„±ì„ ì¶•í•˜í•©ë‹ˆë‹¤.
 
-## ÆÀ¼Ò°³ ¹× ÆäÀÌÁö¸¦ ²Ù¸çÁÖ¼¼¿ä.
+## íŒ€ì†Œê°œ ë° íŽ˜ì´ì§€ë¥¼ ê¾¸ë©°ì£¼ì„¸ìš”.
 
-- readme.md ¼öÁ¤.
+- readme.md ìˆ˜ì •.
 
-- index.md ¿¹½Ãº¸°í ¼öÁ¤.
+- index.md ì˜ˆì‹œë³´ê³  ìˆ˜ì •.
 
-- ¼öÁ¤ÈÄ ÆÀÆäÀÌÁö È®ÀÎÇÏ¿© Á¡°Ë.
+- ìˆ˜ì •í›„ íŒ€íŽ˜ì´ì§€ í™•ì¸í•˜ì—¬ ì ê²€.
 
-**ÆÀÆäÀÌÁö ÁÖ¼Ò** -> https://kookmin-sw.github.io/ `{{ÀÚ½ÅÀÇ ¸®ÆÄÁöÅä¸® ¾ÆÀÌµð}}`
+**íŒ€íŽ˜ì´ì§€ ì£¼ì†Œ** -> https://kookmin-sw.github.io/ `{{ìžì‹ ì˜ ë¦¬íŒŒì§€í† ë¦¬ ì•„ì´ë””}}`
 
-**¿¹½Ã)** 1Á¶  https://kookmin-sw.github.io/2018-cap-1
+**ì˜ˆì‹œ)** 1ì¡°  https://kookmin-sw.github.io/2018-cap-1
 
-## readmeÆÄÀÏ¿¡ ¾Æ·¡¿Í °°Àº ³»¿ëµéÀ» Ãß°¡ÇÏ¼¼¿ä.
+## readmeíŒŒì¼ì— ì•„ëž˜ì™€ ê°™ì€ ë‚´ìš©ë“¤ì„ ì¶”ê°€í•˜ì„¸ìš”.
 
-## 1. ÇÁ·ÎÀèÆ® ¼Ò°³
-> À¯Æ©ºê¸¦ ÇÊµÎ·Î ÇÑ ¿µ»ó ½ÃÀåÀº ÃÖ±Ù±îÁö Áö¼ÓÀûÀ¸·Î Å©°Ô ¼ºÀåÇÏ°í ÀÖ´Ù.±×·±µ¥ ½ÃÀåÀÌ Ä¿Áö°í ÀÖ´Â ¸¸Å­ ¹®Á¦Á¡µµ ¹ß»ýÇÏ°í ÀÖ´Ù. 
-°°ÀÌ ±æ°Å¸®¸¦ Áö³ª°¡´Ù ¾ó±¼ÀÌ ÂïÇô ¹Ù·Î ½Ç½Ã°£ ¹æ¼Û¿¡ ³ëÃâµÇ´Â ¹®Á¦°¡ ¸¹¾ÆÁö°í ÀÖ´Ù. ¶Ç´Â ÇàÀÎÀÇ ¾ó±¼ÀÌ ÂïÇôÀÖ´Â ¿µ»óÀ» ÆíÁý¾øÀÌ ¾÷·ÎµåÇÏ´Â ¹®Á¦µµ ÀÖ´Ù. °Ô´Ù°¡ ±âÁ¸ÀÇ TV ¹üÁË ¿ëÀÇÀÚ »ý¹æ¼Û È­¸éÀ» ¼ÛÃâÇÒ ¶§µµ ÃÊ»ó±Ç º¸È£¸¦ ÇÊ¿ä·Î ÇÏ´Â »óÈ²ÀÌ ÀÖ´Ù.
-¿ì¸®´Â À§¿Í °°Àº ¹®Á¦¿¡ ÁÖ¸ñÇÏ¿© ¿ì¸®´Â ÀÌ¹ÌÁö³ª ´Ü¼ø ¿µ»ó ¶Ç´Â ½Ç½Ã°£ ¿µ»óÀ» ÀÔ·ÂÀ¸·Î ¹Þ¾Æ »ç¿ëÀÚ°¡ ¼³Á¤ÇÑ Å½»ö ¿É¼Ç(¾ó±¼ ¶Ç´Â »ç¶÷ ÀüÃ¼)¿¡ µû¶ó ÀÚµ¿À¸·Î ºí·¯Ã³¸® ÇØÁØ ÈÄ Ãâ·ÂÇØÁÖ´Â ±â´ÉÀ» °¡Áø ÇÁ·Î±×·¥À» Á¦°øÇÑ´Ù.
-
-
-
-## 2. ¼Ò°³ ¿µ»ó
-
-ÇÁ·ÎÁ§Æ® ¼Ò°³ÇÏ´Â ¿µ»óÀ» Ãß°¡ÇÏ¼¼¿ä
-
-## 3. ÆÀ ¼Ò°³
-
-### Áöµµ±³¼ö´Ô : ±è ¿µ ¸¸ ±³¼ö´Ô
+## 1. í”„ë¡œìž­íŠ¸ ì†Œê°œ
+> ìœ íŠœë¸Œë¥¼ í•„ë‘ë¡œ í•œ ì˜ìƒ ì‹œìž¥ì€ ìµœê·¼ê¹Œì§€ ì§€ì†ì ìœ¼ë¡œ í¬ê²Œ ì„±ìž¥í•˜ê³  ìžˆë‹¤.ê·¸ëŸ°ë° ì‹œìž¥ì´ ì»¤ì§€ê³  ìžˆëŠ” ë§Œí¼ ë¬¸ì œì ë„ ë°œìƒí•˜ê³  ìžˆë‹¤. 
+ê°™ì´ ê¸¸ê±°ë¦¬ë¥¼ ì§€ë‚˜ê°€ë‹¤ ì–¼êµ´ì´ ì°í˜€ ë°”ë¡œ ì‹¤ì‹œê°„ ë°©ì†¡ì— ë…¸ì¶œë˜ëŠ” ë¬¸ì œê°€ ë§Žì•„ì§€ê³  ìžˆë‹¤. ë˜ëŠ” í–‰ì¸ì˜ ì–¼êµ´ì´ ì°í˜€ìžˆëŠ” ì˜ìƒì„ íŽ¸ì§‘ì—†ì´ ì—…ë¡œë“œí•˜ëŠ” ë¬¸ì œë„ ìžˆë‹¤. ê²Œë‹¤ê°€ ê¸°ì¡´ì˜ TV ë²”ì£„ ìš©ì˜ìž ìƒë°©ì†¡ í™”ë©´ì„ ì†¡ì¶œí•  ë•Œë„ ì´ˆìƒê¶Œ ë³´í˜¸ë¥¼ í•„ìš”ë¡œ í•˜ëŠ” ìƒí™©ì´ ìžˆë‹¤.
+ìš°ë¦¬ëŠ” ìœ„ì™€ ê°™ì€ ë¬¸ì œì— ì£¼ëª©í•˜ì—¬ ìš°ë¦¬ëŠ” ì´ë¯¸ì§€ë‚˜ ë‹¨ìˆœ ì˜ìƒ ë˜ëŠ” ì‹¤ì‹œê°„ ì˜ìƒì„ ìž…ë ¥ìœ¼ë¡œ ë°›ì•„ ì‚¬ìš©ìžê°€ ì„¤ì •í•œ íƒìƒ‰ ì˜µì…˜(ì–¼êµ´ ë˜ëŠ” ì‚¬ëžŒ ì „ì²´)ì— ë”°ë¼ ìžë™ìœ¼ë¡œ ë¸”ëŸ¬ì²˜ë¦¬ í•´ì¤€ í›„ ì¶œë ¥í•´ì£¼ëŠ” ê¸°ëŠ¥ì„ ê°€ì§„ í”„ë¡œê·¸ëž¨ì„ ì œê³µí•œë‹¤.
 
 
-### ±è ¿ë ¿í (ÆÀÀå)
+
+## 2. ì†Œê°œ ì˜ìƒ
+
+í”„ë¡œì íŠ¸ ì†Œê°œí•˜ëŠ” ì˜ìƒì„ ì¶”ê°€í•˜ì„¸ìš”
+
+## 3. íŒ€ ì†Œê°œ
+
+### ì§€ë„êµìˆ˜ë‹˜ : ê¹€ ì˜ ë§Œ êµìˆ˜ë‹˜
+
+
+### ê¹€ ìš© ìš± (íŒ€ìž¥)
 * Tel: 010-2934-9007
 * Github: [https://github.com/Kim-yonguk](https://github.com/Kim-yonguk)
-* Role : Object Detection ¸ðµ¨ ¿¬±¸ ¹× »ç¿ë, Àü¹ÝÀûÀÎ ÇÁ·Î¼¼½º °ü¸®
+* Role : Object Detection ëª¨ë¸ ì—°êµ¬ ë° ì‚¬ìš©, ì „ë°˜ì ì¸ í”„ë¡œì„¸ìŠ¤ ê´€ë¦¬
 
 
-### ±è ´ë Èñ (ÆÀ¿ø)
+### ê¹€ ëŒ€ í¬ (íŒ€ì›)
 * Tel: 010-6788-5132
 * Github: [https://github.com/dnap512](https://github.com/dnap512)
-* Role : Object Detection ¸ðµ¨ ¿¬±¸ ¹× »ç¿ë
+* Role : Object Detection ëª¨ë¸ ì—°êµ¬ ë° ì‚¬ìš©
 
 
-### ±Ç º¸ °æ (ÆÀ¿ø)
+### ê¶Œ ë³´ ê²½ (íŒ€ì›)
 * Tel: 010-0000-0000
 * Github: [https://github.com/](https://github.com/)
 * Role : 
 
 
-### ÀÌ ³ª ¿µ (ÆÀ¿ø)
-* Tel: 010-0000-0000
-* Github: [https://github.com/](https://github.com/)
-* Role :  
+### ì´ ë‚˜ ì˜ (íŒ€ì›)
+* Tel: 010-9745-9767
+* Github: [https://github.com/bokiri409](https://github.com/bokiri409)
+* Role :  blur ì²˜ë¦¬ê¸°ëŠ¥ ë° ì˜ìƒì²˜ë¦¬
 
 
-### Ã¤ ½Â ÈÆ (ÆÀ¿ø)
+### ì±„ ìŠ¹ í›ˆ (íŒ€ì›)
 * Tel: 010-7773-6999
 * Github: [https://github.com/SeunghunChae/opencv](https://github.com/SeunghunChae/opencv)
-* Role :  Gui, openCV, °´Ã¼Å½Áö ¸ðµ¨ ±¸Çö
+* Role :  Gui, openCV, ê°ì²´íƒì§€ ëª¨ë¸ êµ¬í˜„
 
 
 
 
 
 
-## 4. »ç¿ë¹ý
+## 4. ì‚¬ìš©ë²•
 
-¼Ò½ºÄÚµåÁ¦Ãâ½Ã ¼³Ä¡¹ýÀÌ³ª »ç¿ë¹ýÀ» ÀÛ¼ºÇÏ¼¼¿ä.
+ì†ŒìŠ¤ì½”ë“œì œì¶œì‹œ ì„¤ì¹˜ë²•ì´ë‚˜ ì‚¬ìš©ë²•ì„ ìž‘ì„±í•˜ì„¸ìš”.
 
-## 5. ±âÅ¸
+## 5. ê¸°íƒ€
 
-Ãß°¡ÀûÀÎ ³»¿ëÀº ÀÚÀ¯·Ó°Ô ÀÛ¼ºÇÏ¼¼¿ä.
+ì¶”ê°€ì ì¸ ë‚´ìš©ì€ ìžìœ ë¡­ê²Œ ìž‘ì„±í•˜ì„¸ìš”.
 
 
-## MarkdownÀ» »ç¿ëÇÏ¿© ³»¿ë²Ù¹Ì±â
+## Markdownì„ ì‚¬ìš©í•˜ì—¬ ë‚´ìš©ê¾¸ë¯¸ê¸°
 
-MarkdownÀº ÀÛ¹®À» ½ºÅ¸ÀÏ¸µÇÏ±âÀ§ÇÑ °¡º±°í »ç¿ëÇÏ±â ½¬¿î ±¸¹®ÀÔ´Ï´Ù. ¿©±â¿¡´Â ´ÙÀ½À»À§ÇÑ ±ÔÄ¢ÀÌ Æ÷ÇÔµË´Ï´Ù.
+Markdownì€ ìž‘ë¬¸ì„ ìŠ¤íƒ€ì¼ë§í•˜ê¸°ìœ„í•œ ê°€ë³ê³  ì‚¬ìš©í•˜ê¸° ì‰¬ìš´ êµ¬ë¬¸ìž…ë‹ˆë‹¤. ì—¬ê¸°ì—ëŠ” ë‹¤ìŒì„ìœ„í•œ ê·œì¹™ì´ í¬í•¨ë©ë‹ˆë‹¤.
 
 ```markdown
 Syntax highlighted code block
@@ -97,8 +97,8 @@ Syntax highlighted code block
 [Link](url) and ![Image](src)
 ```
 
-ÀÚ¼¼ÇÑ ³»¿ëÀº [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+ìžì„¸í•œ ë‚´ìš©ì€ [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
 
 ### Support or Contact
 
-readme ÆÄÀÏ »ý¼º¿¡ Ãß°¡ÀûÀÎ µµ¿òÀÌ ÇÊ¿äÇÏ¸é [µµ¿ò¸»](https://help.github.com/articles/about-readmes/) ÀÌ³ª [contact support](https://github.com/contact) À» ÀÌ¿ëÇÏ¼¼¿ä.
+readme íŒŒì¼ ìƒì„±ì— ì¶”ê°€ì ì¸ ë„ì›€ì´ í•„ìš”í•˜ë©´ [ë„ì›€ë§](https://help.github.com/articles/about-readmes/) ì´ë‚˜ [contact support](https://github.com/contact) ì„ ì´ìš©í•˜ì„¸ìš”.
