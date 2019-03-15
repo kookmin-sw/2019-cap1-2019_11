@@ -13,7 +13,7 @@
 
 ## 2. ¼Ò°³ ¿µ»ó
 
- <img src =./pic/AutoBlurwithHumanDetection.jpg width="20%" height="20%">(https://youtu.be/RmdcH2qJsM0)
+ [![Video Label](https://img.youtube.com/vi/RmdcH2qJsM0/0.jpg)](https://youtu.be/RmdcH2qJsM0)
 
 <img src =./pic/±è¿µ¸¸±³¼ö´Ô.jpeg width="20%" height="20%">
 ## 3. ÆÀ ¼Ò°³
