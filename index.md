@@ -23,12 +23,15 @@
 
 
 <img src =./pic/용욱.jpeg width="20%" height="20%">
+
 ```
 * 김 용 욱 (팀장)
 * Tel: 010-2934-9007
 * Github: [https://github.com/Kim-yonguk](https://github.com/Kim-yonguk)
 * Role : Object Detection 모델 연구 및 사용, 전반적인 프로세스 관리
 ```
+
+<img src =./pic/대희.jpeg width="20%" height="20%">
 
 ```
 * 김 대 희 (팀원)
@@ -37,6 +40,8 @@
 * Role : Object Detection 모델 연구 및 사용
 ```
 
+<img src =./pic/보경.jpeg width="20%" height="20%">
+
 ```
 * 권 보 경 (팀원)
 * Tel: 010-6282-1602
@@ -44,12 +49,16 @@
 * Role : blur 처리기능 및 영상처리
 ```
 
+<img src =./pic/나영.jpeg width="20%" height="20%">
+
 ```
 * 이 나 영 (팀원)
 * Tel: 010-9745-9767
 * Github: [https://github.com/bokiri409](https://github.com/bokiri409)
 * Role :  blur 처리기능 및 영상처리
 ```
+
+<img src =./pic/승훈.jpeg width="20%" height="20%">
 
 ```
 * 채 승 훈 (팀원)
