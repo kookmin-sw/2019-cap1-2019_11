@@ -1,4 +1,4 @@
-
+﻿
 
 **팀페이지 주소** -> https://kookmin-sw.github.io/2019-cap1-2019_11/
 
@@ -13,7 +13,7 @@
 
 ## 2. 소개 영상
 
-프로젝트 소개하는 영상을 추가하세요
+ [![image](./pic/AutoBlurwithHumanDetection)](https://youtu.be/RmdcH2qJsM0)
 
 ## 3. 팀 소개
 
