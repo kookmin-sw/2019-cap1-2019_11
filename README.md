@@ -1,10 +1,6 @@
 
 
-**팀페이지 주소** -> https://kookmin-sw.github.io/ `{{자신의 리파지토리 아이디}}`
-
-**예시)** 1조  https://kookmin-sw.github.io/2018-cap-1
-
-## readme파일에 아래와 같은 내용들을 추가하세요.
+**팀페이지 주소** -> https://kookmin-sw.github.io/2019-cap1-2019_11/
 
 # Team. Bblur
 
@@ -24,38 +20,40 @@
 <img src =./pic/김영만교수님.jpeg width="20%" height="20%">
 
 ```
--지도교수님 : 김 영 만 교수님
+* 지도교수님 : 김 영 만 교수님
 * 이메일 : ymkim@kookmin.ac.kr
 ```
 
+
+<img src =./pic/용욱.jpeg width="20%" height="20%">
 ```
 * 김 용 욱 (팀장)
 * Tel: 010-2934-9007
 * Github: [https://github.com/Kim-yonguk](https://github.com/Kim-yonguk)
 * Role : Object Detection 모델 연구 및 사용, 전반적인 프로세스 관리
 ```
-
+<img src =./pic/대희.jpeg width="20%" height="20%">
 ```
 * 김 대 희 (팀원)
 * Tel: 010-6788-5132
 * Github: [https://github.com/dnap512](https://github.com/dnap512)
 * Role : Object Detection 모델 연구 및 사용
 ```
-
+<img src =./pic/보경.jpeg width="20%" height="20%">
 ```
 * 권 보 경 (팀원)
 * Tel: 010-6282-1602
 * Github: [https://github.com/bokyeung](https://github.com/bokyeung)
 * Role : blur 처리기능 및 영상처리
 ```
-
+<img src =./pic/나영.jpeg width="20%" height="20%">
 ```
 * 이 나 영 (팀원)
 * Tel: 010-9745-9767
 * Github: [https://github.com/bokiri409](https://github.com/bokiri409)
 * Role :  blur 처리기능 및 영상처리
 ```
-
+<img src =./pic/승훈.jpeg width="20%" height="20%">
 ```
 * 채 승 훈 (팀원)
 * Tel: 010-7773-6999
