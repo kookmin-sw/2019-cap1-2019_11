@@ -10,18 +10,16 @@
 
 ## 2. 소개 영상
 
-프로젝트 소개하는 영상을 추가하세요
-
+ [![Video Label](https://img.youtube.com/vi/RmdcH2qJsM0/0.jpg)](https://youtu.be/RmdcH2qJsM0)
+ 
 ## 3. 팀 소개
 
-<img width="30%" height="30%">![Alt text](/pic/용욱.jpeg)</img>
 
 ```
 * 지도교수님 : 김 영 만 교수님
 * 이메일 : ymkim@kookmin.ac.kr
 ```
 
-<img width="30%" height="30%">![Alt text](/pic/용욱.jpeg)</img>
 
 
 ```
@@ -31,7 +29,6 @@
 * Role : Object Detection 모델 연구 및 사용, 전반적인 프로세스 관리
 ```
 
-<img width="30%" height="30%">![Alt text](/pic/대희.jpeg)</img>
 
 ```
 * 김 대 희 (팀원)
@@ -40,7 +37,6 @@
 * Role : Object Detection 모델 연구 및 사용
 ```
 
-<img width="30%" height="30%">![Alt text](/pic/보경.jpeg)</img>
 
 ```
 * 권 보 경 (팀원)
@@ -49,7 +45,6 @@
 * Role : blur 처리기능 및 영상처리
 ```
 
-<img width="30%" height="30%">![Alt text](/pic/나영.jpeg)</img>
 
 ```
 * 이 나 영 (팀원)
@@ -57,8 +52,6 @@
 * Github: [https://github.com/bokiri409](https://github.com/bokiri409)
 * Role :  blur 처리기능 및 영상처리
 ```
-
-<img width="30%" height="30%">![Alt text](/pic/승훈.jpeg)</img>
 
 ```
 * 채 승 훈 (팀원)
