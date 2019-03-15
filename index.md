@@ -14,15 +14,15 @@
 
 ## 3. 팀 소개
 
-<img src =./pic/김영만교수님.jpeg width="20%" height="20%">
+<img width="30%" height="30%">![Alt text](/pic/용욱.jpeg)</img>
 
 ```
 * 지도교수님 : 김 영 만 교수님
 * 이메일 : ymkim@kookmin.ac.kr
 ```
 
+<img width="30%" height="30%">![Alt text](/pic/용욱.jpeg)</img>
 
-![Alt text](/pic/용욱.jpeg)
 
 ```
 * 김 용 욱 (팀장)
@@ -31,7 +31,7 @@
 * Role : Object Detection 모델 연구 및 사용, 전반적인 프로세스 관리
 ```
 
-![Alt text](/pic/대희.jpeg)
+<img width="30%" height="30%">![Alt text](/pic/대희.jpeg)</img>
 
 ```
 * 김 대 희 (팀원)
@@ -40,7 +40,7 @@
 * Role : Object Detection 모델 연구 및 사용
 ```
 
-![Alt text](/pic/보경.jpeg)
+<img width="30%" height="30%">![Alt text](/pic/보경.jpeg)</img>
 
 ```
 * 권 보 경 (팀원)
@@ -49,7 +49,7 @@
 * Role : blur 처리기능 및 영상처리
 ```
 
-![Alt text](/pic/나영.jpeg)
+<img width="30%" height="30%">![Alt text](/pic/나영.jpeg)</img>
 
 ```
 * 이 나 영 (팀원)
@@ -58,7 +58,7 @@
 * Role :  blur 처리기능 및 영상처리
 ```
 
-![Alt text](/pic/승훈.jpeg)
+<img width="30%" height="30%">![Alt text](/pic/승훈.jpeg)</img>
 
 ```
 * 채 승 훈 (팀원)
