@@ -22,7 +22,7 @@
 ```
 
 
-<img src =./pic/용욱.jpeg width="20%" height="20%">
+![Alt text](/pic/용욱.jpeg)
 
 ```
 * 김 용 욱 (팀장)
@@ -31,7 +31,7 @@
 * Role : Object Detection 모델 연구 및 사용, 전반적인 프로세스 관리
 ```
 
-<img src =./pic/대희.jpeg width="20%" height="20%">
+![Alt text](/pic/대희.jpeg)
 
 ```
 * 김 대 희 (팀원)
@@ -40,7 +40,7 @@
 * Role : Object Detection 모델 연구 및 사용
 ```
 
-<img src =./pic/보경.jpeg width="20%" height="20%">
+![Alt text](/pic/보경.jpeg)
 
 ```
 * 권 보 경 (팀원)
@@ -49,7 +49,7 @@
 * Role : blur 처리기능 및 영상처리
 ```
 
-<img src =./pic/나영.jpeg width="20%" height="20%">
+![Alt text](/pic/나영.jpeg)
 
 ```
 * 이 나 영 (팀원)
@@ -58,7 +58,7 @@
 * Role :  blur 처리기능 및 영상처리
 ```
 
-<img src =./pic/승훈.jpeg width="20%" height="20%">
+![Alt text](/pic/승훈.jpeg)
 
 ```
 * 채 승 훈 (팀원)
