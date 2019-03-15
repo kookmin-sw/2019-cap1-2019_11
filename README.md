@@ -45,9 +45,9 @@
 
 
 ### 권 보 경 (팀원)
-* Tel: 010-0000-0000
-* Github: [https://github.com/](https://github.com/)
-* Role : 
+* Tel: 010-6282-1602
+* Github: [https://github.com/bokyeung](https://github.com/bokyeung)
+* Role : blur 처리기능 및 영상처리
 
 
 ### 이 나 영 (팀원)
