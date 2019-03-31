@@ -10,11 +10,15 @@
 # Contains methods of YOLO
 #
 # *******************************************************************
-
+import datetime
+import time
 import os
 import colorsys
 import numpy as np
 import cv2
+import face_recognition
+import pickle
+from utils import *
 
 from yolo.model import eval
 
@@ -184,6 +188,7 @@ def detect_img(yolo):
 
 
 def detect_video(model, video_path=None, output=None):
+    now = datetime.datetime.now()
     if video_path == 'stream':
         print('test stream')
         vid = cv2.VideoCapture(0)
@@ -192,13 +197,14 @@ def detect_video(model, video_path=None, output=None):
         vid = cv2.VideoCapture(video_path)
     if not vid.isOpened():
         raise IOError("Couldn't open webcam or video")
-
+#    vid.set(cv2.cv.CV_CAP_PROP_FPS, 11)
+#vid.set(cv2.CAP_PROP_FPS, 11)
     # the video format and fps
     # video_fourcc = int(vid.get(cv2.CAP_PROP_FOURCC))
 #    video_fourcc = cv2.VideoWriter_fourcc('M', 'G', 'P', 'G')
     video_fourcc = cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')
-    video_fps = vid.get(cv2.CAP_PROP_FPS)
-    print(video_fps)
+    video_fps = vid.get(cv2.CAP_PROP_FPS)/2
+    print("video_fps",video_fps)
 
     # the size of the frames to write
     video_size = (int(vid.get(cv2.CAP_PROP_FRAME_WIDTH)),
@@ -206,50 +212,59 @@ def detect_video(model, video_path=None, output=None):
     isOutput = True if output != "" else False
     if isOutput:
         output_fn = 'output_video.avi'
+#        out = cv2.VideoWriter(os.path.join(output, output_fn), video_fourcc, video_fps, video_size)
         out = cv2.VideoWriter(os.path.join(output, output_fn), video_fourcc, video_fps, video_size)
 
     accum_time = 0
     curr_fps = 0
     fps = "FPS: ??"
     prev_time = timer()
+    cnt=0
     ###################################
     while True:
+        
         ret, frame = vid.read()
-        if ret:
-            image = Image.fromarray(frame)
-            image, faces = model.detect_image(image)
-            result = np.asarray(image)
+        if cnt % 2 == 0:
+            if ret:
+                image = Image.fromarray(frame)
+                image, faces = model.detect_image(image)
+                result = np.asarray(image)
 
-            curr_time = timer()
-            exec_time = curr_time - prev_time
-            prev_time = curr_time
-            accum_time = accum_time + exec_time
-            curr_fps = curr_fps + 1
-            if accum_time > 1:
-                accum_time = accum_time - 1
-                fps = curr_fps
-                curr_fps = 0
+    #            curr_time = timer()
+    #            exec_time = curr_time - prev_time
+    #            prev_time = curr_time
+    #            accum_time = accum_time + exec_time
+    #            curr_fps = curr_fps + 1
+    #            if accum_time > 1:
+    #                accum_time = accum_time - 1
+    #                fps = curr_fps
+    #                curr_fps = 0
 
-            # initialize the set of information we'll displaying on the frame
-            info = [
-                ('FPS', '{}'.format(fps)),
-                ('Faces detected', '{}'.format(len(faces)))
-            ]
-            cv2.rectangle(result, (5, 5), (120, 50), (0, 0, 0), cv2.FILLED)
+                # initialize the set of information we'll displaying on the frame
+                info = [
+                    ('FPS', '{}'.format(fps)),
+                    ('Faces detected', '{}'.format(len(faces)))
+                ]
+                cv2.rectangle(result, (5, 5), (120, 50), (0, 0, 0), cv2.FILLED)
 
-            for (i, (txt, val)) in enumerate(info):
-                text = '{}: {}'.format(txt, val)
-                cv2.putText(result, text, (10, (i * 20) + 20),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.3, (10, 175, 0), 1)
+                for (i, (txt, val)) in enumerate(info):
+                    text = '{}: {}'.format(txt, val)
+                    cv2.putText(result, text, (10, (i * 20) + 20),
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.3, (10, 175, 0), 1)
 
-#            cv2.namedWindow("face", cv2.WINDOW_NORMAL)
-#            cv2.imshow("face", result)
-            if isOutput:
-                out.write(result)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
+    #            cv2.namedWindow("face", cv2.WINDOW_NORMAL)
+    #            cv2.imshow("face", result)
+                if isOutput:
+                    out.write(result)
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break
+            else:
                 break
-        else:
-            break
+        cnt += 1
+
+    end = datetime.datetime.now()
+    print(now)
+    print(end)
     vid.release()
     out.release()
     cv2.destroyAllWindows()
