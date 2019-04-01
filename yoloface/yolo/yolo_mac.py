@@ -12,6 +12,7 @@
 # *******************************************************************
 import datetime
 import time
+import sys
 import os
 import colorsys
 import numpy as np
@@ -34,6 +35,10 @@ class YOLO(object):
         self.model_path = args.model
         self.classes_path = args.classes
         self.anchors_path = args.anchors
+        
+        #추가
+#        self.encodings=args.encodings
+
         self.class_names = self._get_class()
         self.anchors = self._get_anchors()
         self.sess = K.get_session()
@@ -97,8 +102,11 @@ class YOLO(object):
                                            iou_threshold=self.args.iou)
         return boxes, scores, classes
 
-    def detect_image(self, image):
+    def detect_image(self, image, encodings):
+#        data = pickle.loads(open(encodings, "rb").read(),encoding='latin1')
+#        print(data)
         start_time = timer()
+        print('success')
         if self.model_image_size != (None, None):
             assert self.model_image_size[
                        0] % 32 == 0, 'Multiples of 32 required'
@@ -111,7 +119,7 @@ class YOLO(object):
                               image.height - (image.height % 32))
             boxed_image = letterbox_image(image, new_image_size)
         image_data = np.array(boxed_image, dtype='float32')
-        print(image_data.shape)
+        print('image shape', image_data.shape)
         image_data /= 255.
         # add batch dimension
         image_data = np.expand_dims(image_data, 0)
@@ -124,12 +132,16 @@ class YOLO(object):
             })
         print('*** Found {} face(s) for this image'.format(len(out_boxes)))
         thickness = (image.size[0] + image.size[1]) // 400
-
+        final_boxes=[]
         for i, c in reversed(list(enumerate(out_classes))):
             predicted_class = self.class_names[c]
             box = out_boxes[i]
             score = out_scores[i]
+            
+            
+            ##########
             text = '{} {:.2f}'.format(predicted_class, score)
+            
             draw = ImageDraw.Draw(image)
 
             top, left, bottom, right = box
@@ -137,9 +149,9 @@ class YOLO(object):
             left = max(0, np.floor(left + 0.5).astype('int32'))
             bottom = min(image.size[1], np.floor(bottom + 0.5).astype('int32'))
             right = min(image.size[0], np.floor(right + 0.5).astype('int32'))
-
+            
             print(text, (left, top), (right, bottom))
-
+            final_boxes.append([left,top,right,bottom])
             for thk in range(thickness):
                 draw.rectangle(
                     [left + thk, top + thk, right - thk, bottom - thk],
@@ -149,7 +161,7 @@ class YOLO(object):
         end_time = timer()
         print('*** Processing time: {:.2f}ms'.format((end_time -
                                                           start_time) * 1000))
-        return image, out_boxes
+        return image, out_boxes, final_boxes
 
     def close_session(self):
         self.sess.close()
@@ -170,24 +182,29 @@ def letterbox_image(image, size):
     return new_image
 
 
-def detect_img(yolo):
-    while True:
-        img = input('*** Input image filename: ')
-        try:
-            image = Image.open(img)
-        except:
-            if img == 'q' or img == 'Q':
-                break
-            else:
-                print('*** Open Error! Try again!')
-                continue
-        else:
-            res_image, _ = yolo.detect_image(image)
-#            res_image.show()
-    yolo.close_session()
+#def detect_img(yolo):
+#    print('what the')
+#    while True:
+#        print('detect_img : ++++')
+#        img = input('*** Input image filename: ')
+#        try:
+#            image = Image.open(img)
+#        except:
+#            if img == 'q' or img == 'Q':
+#                break
+#            else:
+#                print('*** Open Error! Try again!')
+#                continue
+#        else:
+#            res_image, _ = yolo.detect_image(image)
+##            res_image.show()
+#
+#    print('detect_img : +---------++')
+#    yolo.close_session()
 
-
-def detect_video(model, video_path=None, output=None):
+## encoding
+def detect_video(model, video_path=None, output=None, encodings=None):
+    data = pickle.loads(open(encodings, "rb").read(),encoding='latin1')
     now = datetime.datetime.now()
     if video_path == 'stream':
         print('test stream')
@@ -220,15 +237,42 @@ def detect_video(model, video_path=None, output=None):
     fps = "FPS: ??"
     prev_time = timer()
     cnt=0
+    names=[]
     ###################################
     while True:
         
         ret, frame = vid.read()
         if cnt % 2 == 0:
             if ret:
+                print('Start part')
                 image = Image.fromarray(frame)
-                image, faces = model.detect_image(image)
+#                image, faces, top, left, bottom, right = model.detect_image(image,encodings)
+                image, faces, final_boxes = model.detect_image(image,encodings)
+
                 result = np.asarray(image)
+                
+                
+                print('face입니다', faces)
+                print('fb=',final_boxes)
+                
+                rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                encodings = face_recognition.face_encodings(rgb, final_boxes)
+                
+                for encoding in encodings:
+                    matches=face_recognition.compare_faces(data["encodings"],encoding)
+                    name = "unknown"
+                
+                    if True in matches:
+                        matchedIdxs = [i for (i,b) in enumerate(matches) if b]
+                        counts={}
+                            
+                        for i in matchedIdxs:
+                            name=data["names"][i]
+                            counts[name]=counts.get(name,0)+1
+                        
+                        name=max(counts,key=counts.get)
+                    print('name = ',name)
+                    names.append(name)
 
     #            curr_time = timer()
     #            exec_time = curr_time - prev_time
@@ -241,25 +285,39 @@ def detect_video(model, video_path=None, output=None):
     #                curr_fps = 0
 
                 # initialize the set of information we'll displaying on the frame
-                info = [
-                    ('FPS', '{}'.format(fps)),
-                    ('Faces detected', '{}'.format(len(faces)))
-                ]
-                cv2.rectangle(result, (5, 5), (120, 50), (0, 0, 0), cv2.FILLED)
+                #2893658732658734t587345
+#                info = [
+#                    ('FPS', '{}'.format(fps)),
+#                    ('Faces detected', '{}'.format(len(faces)))
+#                ]
+#                cv2.rectangle(result, (5, 5), (120, 50), (0, 0, 0), cv2.FILLED)
+#
+#                for (i, (txt, val)) in enumerate(info):
+#                    text = '{}: {}'.format(txt, val)
+##                    cv2.putText(result, name, (10, (i * 20) + 20),
+##                                cv2.FONT_HERSHEY_SIMPLEX, 0.3, (10, 175, 0), 1)
+#                    cv2.putText(frame, name, (10, (i * 20) + 20),
+#                                cv2.FONT_HERSHEY_SIMPLEX, 0.3, (10, 175, 0), 1)
+#left,top,right,bottom] trbl
+                for ((left, top, right, bottom), name) in zip(final_boxes, names):
+                    # draw the predicted face name on the image
+                    cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
+                    y = top - 15 if top - 15 > 15 else top + 15
+                    cv2.putText(frame, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,
+                        0.75, (0, 255, 0), 2)
 
-                for (i, (txt, val)) in enumerate(info):
-                    text = '{}: {}'.format(txt, val)
-                    cv2.putText(result, text, (10, (i * 20) + 20),
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.3, (10, 175, 0), 1)
+
 
     #            cv2.namedWindow("face", cv2.WINDOW_NORMAL)
     #            cv2.imshow("face", result)
                 if isOutput:
-                    out.write(result)
+#                    out.write(result)
+                    out.write(frame)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
             else:
                 break
+        print('end Part')
         cnt += 1
 
     end = datetime.datetime.now()
