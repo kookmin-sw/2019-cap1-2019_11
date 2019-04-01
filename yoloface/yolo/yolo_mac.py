@@ -119,7 +119,7 @@ class YOLO(object):
                               image.height - (image.height % 32))
             boxed_image = letterbox_image(image, new_image_size)
         image_data = np.array(boxed_image, dtype='float32')
-        print('image shape', image_data.shape)
+        #print('image shape', image_data.shape)
         image_data /= 255.
         # add batch dimension
         image_data = np.expand_dims(image_data, 0)
@@ -214,13 +214,13 @@ def detect_video(model, video_path=None, output=None, encodings=None):
         vid = cv2.VideoCapture(video_path)
     if not vid.isOpened():
         raise IOError("Couldn't open webcam or video")
-#    vid.set(cv2.cv.CV_CAP_PROP_FPS, 11)
-#vid.set(cv2.CAP_PROP_FPS, 11)
-    # the video format and fps
-    # video_fourcc = int(vid.get(cv2.CAP_PROP_FOURCC))
+
+    
 #    video_fourcc = cv2.VideoWriter_fourcc('M', 'G', 'P', 'G')
     video_fourcc = cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')
-    video_fps = vid.get(cv2.CAP_PROP_FPS)/2
+
+#    video_fps = vid.get(cv2.CAP_PROP_FPS)/2
+    video_fps = vid.get(cv2.CAP_PROP_FPS)
     print("video_fps",video_fps)
 
     # the size of the frames to write
@@ -229,7 +229,6 @@ def detect_video(model, video_path=None, output=None, encodings=None):
     isOutput = True if output != "" else False
     if isOutput:
         output_fn = 'output_video.avi'
-#        out = cv2.VideoWriter(os.path.join(output, output_fn), video_fourcc, video_fps, video_size)
         out = cv2.VideoWriter(os.path.join(output, output_fn), video_fourcc, video_fps, video_size)
 
     accum_time = 0
@@ -237,88 +236,112 @@ def detect_video(model, video_path=None, output=None, encodings=None):
     fps = "FPS: ??"
     prev_time = timer()
     cnt=0
-    names=[]
-    ###################################
+
+
     while True:
-        
         ret, frame = vid.read()
-        if cnt % 2 == 0:
-            if ret:
-                print('Start part')
-                image = Image.fromarray(frame)
-#                image, faces, top, left, bottom, right = model.detect_image(image,encodings)
-                image, faces, final_boxes = model.detect_image(image,encodings)
-
-                result = np.asarray(image)
-                
-                
-                print('face입니다', faces)
-                print('fb=',final_boxes)
-                
-                rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                encodings = face_recognition.face_encodings(rgb, final_boxes)
-                
-                for encoding in encodings:
-                    matches=face_recognition.compare_faces(data["encodings"],encoding)
-                    name = "unknown"
-                
-                    if True in matches:
-                        matchedIdxs = [i for (i,b) in enumerate(matches) if b]
-                        counts={}
-                            
-                        for i in matchedIdxs:
-                            name=data["names"][i]
-                            counts[name]=counts.get(name,0)+1
+        
+        if ret:
+            print('Start part')
+            image = Image.fromarray(frame)
+            image, faces, final_boxes = model.detect_image(image,encodings)
+                    
+            result = np.asarray(image)
+                    
+                    
+            print('face입니다', faces)
+            print('fb=',final_boxes)
+            names=[]
+            rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            encodings = face_recognition.face_encodings(rgb, final_boxes)
+                    
+            for encoding in encodings:
+                matches=face_recognition.compare_faces(data["encodings"],encoding)
+                name = "unknown"
                         
-                        name=max(counts,key=counts.get)
-                    print('name = ',name)
-                    names.append(name)
-
-    #            curr_time = timer()
-    #            exec_time = curr_time - prev_time
-    #            prev_time = curr_time
-    #            accum_time = accum_time + exec_time
-    #            curr_fps = curr_fps + 1
-    #            if accum_time > 1:
-    #                accum_time = accum_time - 1
-    #                fps = curr_fps
-    #                curr_fps = 0
-
-                # initialize the set of information we'll displaying on the frame
-                #2893658732658734t587345
-#                info = [
-#                    ('FPS', '{}'.format(fps)),
-#                    ('Faces detected', '{}'.format(len(faces)))
-#                ]
-#                cv2.rectangle(result, (5, 5), (120, 50), (0, 0, 0), cv2.FILLED)
-#
-#                for (i, (txt, val)) in enumerate(info):
-#                    text = '{}: {}'.format(txt, val)
-##                    cv2.putText(result, name, (10, (i * 20) + 20),
-##                                cv2.FONT_HERSHEY_SIMPLEX, 0.3, (10, 175, 0), 1)
-#                    cv2.putText(frame, name, (10, (i * 20) + 20),
-#                                cv2.FONT_HERSHEY_SIMPLEX, 0.3, (10, 175, 0), 1)
-#left,top,right,bottom] trbl
-                for ((left, top, right, bottom), name) in zip(final_boxes, names):
-                    # draw the predicted face name on the image
-                    cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
-                    y = top - 15 if top - 15 > 15 else top + 15
-                    cv2.putText(frame, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,
-                        0.75, (0, 255, 0), 2)
-
-
-
-    #            cv2.namedWindow("face", cv2.WINDOW_NORMAL)
-    #            cv2.imshow("face", result)
-                if isOutput:
-#                    out.write(result)
-                    out.write(frame)
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
-            else:
+                if True in matches:
+                    matchedIdxs = [i for (i,b) in enumerate(matches) if b]
+                    counts={}
+                            
+                    for i in matchedIdxs:
+                        name=data["names"][i]
+                        counts[name]=counts.get(name,0)+1
+                            
+                    name=max(counts,key=counts.get)
+                print('name = ',name)
+                names.append(name)
+                    
+            for ((left, top, right, bottom), name) in zip(final_boxes, names):
+                # draw the predicted face name on the image
+                cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
+                y = top - 15 if top - 15 > 15 else top + 15
+                cv2.putText(frame, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.75, (0, 255, 0), 2)
+                
+                    
+                    
+            if isOutput:
+                out.write(frame)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
-        print('end Part')
-        cnt += 1
+        else:
+            break
+    print('end Part')
+
+
+    ###################################
+#    while True:
+#
+#        ret, frame = vid.read()
+#        if cnt % 2 == 0:
+#            if ret:
+#                print('Start part')
+#                image = Image.fromarray(frame)
+##                image, faces, top, left, bottom, right = model.detect_image(image,encodings)
+#                image, faces, final_boxes = model.detect_image(image,encodings)
+#
+#                result = np.asarray(image)
+#
+#
+#                print('face입니다', faces)
+#                print('fb=',final_boxes)
+#
+#                rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+#                encodings = face_recognition.face_encodings(rgb, final_boxes)
+#
+#                for encoding in encodings:
+#                    matches=face_recognition.compare_faces(data["encodings"],encoding)
+#                    name = "unknown"
+#
+#                    if True in matches:
+#                        matchedIdxs = [i for (i,b) in enumerate(matches) if b]
+#                        counts={}
+#
+#                        for i in matchedIdxs:
+#                            name=data["names"][i]
+#                            counts[name]=counts.get(name,0)+1
+#
+#                        name=max(counts,key=counts.get)
+#                    print('name = ',name)
+#                    names.append(name)
+#
+#                for ((left, top, right, bottom), name) in zip(final_boxes, names):
+#                    # draw the predicted face name on the image
+#                    cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
+#                    y = top - 15 if top - 15 > 15 else top + 15
+#                    cv2.putText(frame, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,
+#                        0.75, (0, 255, 0), 2)
+#
+#
+#
+#                if isOutput:
+#                    out.write(frame)
+#                if cv2.waitKey(1) & 0xFF == ord('q'):
+#                    break
+#            else:
+#                break
+#        print('end Part')
+#        cnt += 1
 
     end = datetime.datetime.now()
     print(now)
