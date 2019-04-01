@@ -1,6 +1,7 @@
 import argparse
 
-from yolo.yolo import YOLO, detect_video, detect_img, letterbox_image
+#from yolo.yolo import YOLO, detect_video, detect_img, letterbox_image
+from yolo.yolo import YOLO, detect_video, letterbox_image
 import face_recognition
 import os
 import datetime
@@ -26,6 +27,9 @@ def get_args():
                         help='path to the video')
     parser.add_argument('--output', type=str, default='outputs/',
                         help='image/video output path')
+    parser.add_argument('--encodings', required=True,
+                        help="path to serialized db of facial encodings")
+
     
     args = parser.parse_args()
     return args
@@ -45,7 +49,8 @@ def _main():
     else:
         print('[i] ==> Video detection mode\n')
         # Call the detect_video method here
-        detect_video(YOLO(args), args.video, args.output)
+        # ******* args.encodings 추가
+        detect_video(YOLO(args), args.video, args.output, args.encodings)
 
     
     print('Well + done!!!')
