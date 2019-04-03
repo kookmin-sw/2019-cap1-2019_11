@@ -1,15 +1,4 @@
-# *******************************************************************
-#
-# Author : Thanh Nguyen, 2018
-# Email  : sthanhng@gmail.com
-# Github : https://github.com/sthanhng
-#
-# Face detection using the YOLOv3 algorithm
-#
-# Description : yolo.py
-# Contains methods of YOLO
-#
-# *******************************************************************
+
 import datetime
 import time
 import sys
@@ -28,6 +17,16 @@ from keras.models import load_model
 from timeit import default_timer as timer
 from PIL import ImageDraw, Image
 
+CONF_THRESHOLD = 0.3
+NMS_THRESHOLD = 0.2
+IMG_WIDTH = 416
+IMG_HEIGHT = 416
+
+COLOR_BLUE = (255, 0, 0)
+COLOR_GREEN = (0, 255, 0)
+COLOR_RED = (0, 0, 255)
+COLOR_WHITE = (255, 255, 255)
+COLOR_YELLOW = (0, 255, 255)
 
 class YOLO(object):
     def __init__(self, args):
@@ -101,7 +100,8 @@ class YOLO(object):
                                            score_threshold=self.args.score,
                                            iou_threshold=self.args.iou)
         return boxes, scores, classes
-
+    
+    
     def detect_image(self, image, encodings):
 #        data = pickle.loads(open(encodings, "rb").read(),encoding='latin1')
 #        print(data)
@@ -150,8 +150,11 @@ class YOLO(object):
             bottom = min(image.size[1], np.floor(bottom + 0.5).astype('int32'))
             right = min(image.size[0], np.floor(right + 0.5).astype('int32'))
             
-            print(text, (left, top), (right, bottom))
-            final_boxes.append([left,top,right,bottom])
+            #top, right, bottom, left
+            #print(text, (left, top), (right, bottom))
+            print(text, (top, right), (bottom, left))
+#            final_boxes.append([left,top,right,bottom])
+            final_boxes.append([top,right,bottom,left])
             for thk in range(thickness):
                 draw.rectangle(
                     [left + thk, top + thk, right - thk, bottom - thk],
@@ -182,28 +185,9 @@ def letterbox_image(image, size):
     return new_image
 
 
-#def detect_img(yolo):
-#    print('what the')
-#    while True:
-#        print('detect_img : ++++')
-#        img = input('*** Input image filename: ')
-#        try:
-#            image = Image.open(img)
-#        except:
-#            if img == 'q' or img == 'Q':
-#                break
-#            else:
-#                print('*** Open Error! Try again!')
-#                continue
-#        else:
-#            res_image, _ = yolo.detect_image(image)
-##            res_image.show()
-#
-#    print('detect_img : +---------++')
-#    yolo.close_session()
-
 ## encoding
 def detect_video(model, video_path=None, output=None, encodings=None):
+    print('mo')
     data = pickle.loads(open(encodings, "rb").read(),encoding='latin1')
     now = datetime.datetime.now()
     if video_path == 'stream':
@@ -221,7 +205,7 @@ def detect_video(model, video_path=None, output=None, encodings=None):
 
 #    video_fps = vid.get(cv2.CAP_PROP_FPS)/2
     video_fps = vid.get(cv2.CAP_PROP_FPS)
-    print("video_fps",video_fps)
+    print("video_fps : ",video_fps)
 
     # the size of the frames to write
     video_size = (int(vid.get(cv2.CAP_PROP_FRAME_WIDTH)),
@@ -230,12 +214,14 @@ def detect_video(model, video_path=None, output=None, encodings=None):
     if isOutput:
         output_fn = 'output_video.avi'
         out = cv2.VideoWriter(os.path.join(output, output_fn), video_fourcc, video_fps, video_size)
+    #out = cv2.VideoWriter(os.path.join(output, output_fn), video_fourcc, 11, video_size)
 
     accum_time = 0
     curr_fps = 0
     fps = "FPS: ??"
     prev_time = timer()
     cnt=0
+    mosaic_rate = 30
 
 
     while True:
@@ -248,10 +234,18 @@ def detect_video(model, video_path=None, output=None, encodings=None):
                     
             result = np.asarray(image)
                     
-                    
+            #top, right, bottom, left
             print('face입니다', faces)
             print('fb=',final_boxes)
+            #final_boxes.append([left,top,right,bottom])
             names=[]
+           
+            to=[]
+            ri=[]
+            bo=[]
+            le=[]
+            un_count=0
+            
             rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             encodings = face_recognition.face_encodings(rgb, final_boxes)
                     
@@ -269,16 +263,49 @@ def detect_video(model, video_path=None, output=None, encodings=None):
                             
                     name=max(counts,key=counts.get)
                 print('name = ',name)
+                if name == 'unknown':
+                    un_count += 1
                 names.append(name)
-                    
-            for ((left, top, right, bottom), name) in zip(final_boxes, names):
+            #top, right, bottom, left
+            #for ((left, top, right, bottom), name) in zip(final_boxes, names):
+            for ((top, right, bottom, left), name) in zip(final_boxes, names):
                 # draw the predicted face name on the image
-                cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
-                y = top - 15 if top - 15 > 15 else top + 15
-                cv2.putText(frame, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,
-                    0.75, (0, 255, 0), 2)
-                
+                if name == 'unknown':
+                    le.append(left)
+                    to.append(top)
+                    ri.append(right)
+                    bo.append(bottom)
                     
+                    mosaic_image=frame[to[0]:bo[0], le[0]:ri[0]]
+                    print('top : ',to[0])
+                    print('bottom : ',bo[0])
+                    print('left : ',le[0])
+                    print('right : ',ri[0])
+                    print('tmp : ',bo[0]-to[0],' ',ri[0]-le[0])
+                    a=(bo[0]-to[0])//13
+                    b=(ri[0]-le[0])//13
+                    
+                    if a < 0 :
+                        a=1
+                    if b < 0 :
+                        b=1
+                       
+                    mosaic_image=cv2.resize(mosaic_image, (a,b))
+                    mosaic_image=cv2.resize(mosaic_image, (ri[0]-le[0],bo[0]-to[0]), interpolation=cv2.INTER_AREA)
+                    
+
+                    cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
+                    #y = top - 15 if top - 15 > 15 else top + 15
+#                    cv2.putText(frame, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,
+#                        0.75, (0, 255, 0), 2)
+                        #frame[to[0]:bo[0], le[0]:ri[0]]=mosaic_image
+                    frame[to[0]:bo[0], le[0]:ri[0]]=mosaic_image
+                else :
+                    cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
+                        #y = top - 15 if top - 15 > 15 else top + 15
+#                    cv2.putText(frame, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,
+#                                0.75, (0, 255, 0), 2)
+
                     
             if isOutput:
                 out.write(frame)
@@ -286,62 +313,8 @@ def detect_video(model, video_path=None, output=None, encodings=None):
                 break
         else:
             break
-    print('end Part')
+    
 
-
-    ###################################
-#    while True:
-#
-#        ret, frame = vid.read()
-#        if cnt % 2 == 0:
-#            if ret:
-#                print('Start part')
-#                image = Image.fromarray(frame)
-##                image, faces, top, left, bottom, right = model.detect_image(image,encodings)
-#                image, faces, final_boxes = model.detect_image(image,encodings)
-#
-#                result = np.asarray(image)
-#
-#
-#                print('face입니다', faces)
-#                print('fb=',final_boxes)
-#
-#                rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-#                encodings = face_recognition.face_encodings(rgb, final_boxes)
-#
-#                for encoding in encodings:
-#                    matches=face_recognition.compare_faces(data["encodings"],encoding)
-#                    name = "unknown"
-#
-#                    if True in matches:
-#                        matchedIdxs = [i for (i,b) in enumerate(matches) if b]
-#                        counts={}
-#
-#                        for i in matchedIdxs:
-#                            name=data["names"][i]
-#                            counts[name]=counts.get(name,0)+1
-#
-#                        name=max(counts,key=counts.get)
-#                    print('name = ',name)
-#                    names.append(name)
-#
-#                for ((left, top, right, bottom), name) in zip(final_boxes, names):
-#                    # draw the predicted face name on the image
-#                    cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
-#                    y = top - 15 if top - 15 > 15 else top + 15
-#                    cv2.putText(frame, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,
-#                        0.75, (0, 255, 0), 2)
-#
-#
-#
-#                if isOutput:
-#                    out.write(frame)
-#                if cv2.waitKey(1) & 0xFF == ord('q'):
-#                    break
-#            else:
-#                break
-#        print('end Part')
-#        cnt += 1
 
     end = datetime.datetime.now()
     print(now)
