@@ -265,9 +265,16 @@ def detect_video(model, video_path=None, output=None, encodings=None):
                 print('name = ',name)
                 if name == 'unknown':
                     un_count += 1
+#                    le.append(left)
+#                    to.append(top)
+#                    ri.append(right)
+#                    bo.append(bottom)
+
                 names.append(name)
             #top, right, bottom, left
             #for ((left, top, right, bottom), name) in zip(final_boxes, names):
+            cnt=0
+            print('names : ' , names)
             for ((top, right, bottom, left), name) in zip(final_boxes, names):
                 # draw the predicted face name on the image
                 if name == 'unknown':
@@ -275,31 +282,35 @@ def detect_video(model, video_path=None, output=None, encodings=None):
                     to.append(top)
                     ri.append(right)
                     bo.append(bottom)
+                    #print('unknown count = ',un_count)
                     
-                    mosaic_image=frame[to[0]:bo[0], le[0]:ri[0]]
-                    print('top : ',to[0])
-                    print('bottom : ',bo[0])
-                    print('left : ',le[0])
-                    print('right : ',ri[0])
-                    print('tmp : ',bo[0]-to[0],' ',ri[0]-le[0])
-                    a=(bo[0]-to[0])//13
-                    b=(ri[0]-le[0])//13
                     
+                    mosaic_image=frame[to[cnt]:bo[cnt], le[cnt]:ri[cnt]]
+                    print('top : ',to[cnt])
+                    print('bottom : ',bo[cnt])
+                    print('left : ',le[cnt])
+                    print('right : ',ri[cnt])
+                    print('tmp : ',bo[cnt]-to[cnt],' ',ri[cnt]-le[cnt])
+                    a=(bo[cnt]-to[cnt])//13
+                    b=(ri[cnt]-le[cnt])//13
+                        
                     if a < 0 :
                         a=1
                     if b < 0 :
                         b=1
-                       
+                        
                     mosaic_image=cv2.resize(mosaic_image, (a,b))
-                    mosaic_image=cv2.resize(mosaic_image, (ri[0]-le[0],bo[0]-to[0]), interpolation=cv2.INTER_AREA)
-                    
+                    mosaic_image=cv2.resize(mosaic_image, (ri[cnt]-le[cnt],bo[cnt]-to[cnt]), interpolation=cv2.INTER_AREA)
+                        
 
                     cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
+                    frame[to[cnt]:bo[cnt], le[cnt]:ri[cnt]]=mosaic_image
                     #y = top - 15 if top - 15 > 15 else top + 15
 #                    cv2.putText(frame, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,
 #                        0.75, (0, 255, 0), 2)
                         #frame[to[0]:bo[0], le[0]:ri[0]]=mosaic_image
-                    frame[to[0]:bo[0], le[0]:ri[0]]=mosaic_image
+                    cnt += 1
+                    
                 else :
                     cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
                         #y = top - 15 if top - 15 > 15 else top + 15
