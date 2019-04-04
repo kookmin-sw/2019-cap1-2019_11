@@ -19,4 +19,4 @@ drive.mount('/content/gdrive')
 학습명령어 - !python encode_faces.py --dataset dataset --encodings encodings.pickle
 이미지 명령어 - !python yoloface --image samples/example_05.png --encodings encodings.pickle
 동영상 명령어 - !python yoloface_video.py --video samples/test.mp4 --encodings encodings.pickle
-GPU 명령어 - !python yoloface_gpu.py --video samples/test.mp4
+GPU 명령어 - !python yoloface_gpu.py --video samples/test2.mp4 --encodings encodings.pickle
