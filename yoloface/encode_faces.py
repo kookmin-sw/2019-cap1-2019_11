@@ -9,15 +9,32 @@ import pickle
 import cv2
 import os
 
+
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--dataset", required=True,
 	help="path to input directory of faces + images")
 ap.add_argument("-e", "--encodings", required=True,
 	help="path to serialized db of facial encodings")
+ap.add_argument("-v", "--video", help="video path")
 ap.add_argument("-d", "--detection-method", type=str, default="cnn",
 	help="face detection model to use: either `hog` or `cnn`")
 args = vars(ap.parse_args())
+
+if args["video"] is not None:
+    cap = cv2.VideoCapture(args["video"])
+    num = 0
+    file = os.path.basename(os.path.isfile(args["video"]))
+    dir = "drive/Colab/face-recognition-opencv/dataset/"
+    os.mkdir(dir + file)
+    while(cap.isOpened()):
+        ret, frame = cap.read()
+        num+=1
+        if (num % 2) == 0:
+            cv2.imwrite((dir + file + '/' + "%d.png" % num) ,frame)
+    cap.release()
+    cv2.destroyAllWindows()
+
 
 # grab the paths to the input images in our dataset
 print("[INFO] quantifying faces...")
