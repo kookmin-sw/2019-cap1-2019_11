@@ -190,6 +190,7 @@ def detect_video(model, video_path=None, output=None):
 
     video_fourcc = cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')
     video_fps = vid.get(cv2.CAP_PROP_FPS)
+    print(video_fps)
 
     # the size of the frames to write
     video_size = (int(vid.get(cv2.CAP_PROP_FRAME_WIDTH)),
@@ -221,7 +222,7 @@ def detect_video(model, video_path=None, output=None):
 
 
                     name = "Unknown"
-                    if min_value < 0.45 :
+                    if min_value < 0.42 :
                         index=np.argmin(distances)
                         name=model.known_face_names[index]
                     model.face_names.append(name)
@@ -264,7 +265,10 @@ def detect_video(model, video_path=None, output=None):
                 cv2.rectangle(frame, (left, top), (right, bottom+10), (0, 0, 255), 2)
                 font = cv2.FONT_HERSHEY_DUPLEX
                 cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
-                    
+                
+                if video_path == 'stream':
+                    cv2.imshow("face", frame)
+                        
             if isOutput:
                 out.write(frame)
             if cv2.waitKey(1) & 0xFF == ord('q'):

@@ -17,6 +17,9 @@ import datetime
 import numpy as np
 import cv2
 
+from imutils.video import WebcamVideoStream
+from imutils.video import FPS
+import imutils
 import argparse
 import sys
 import os
@@ -143,7 +146,7 @@ def post_process(frame, outs, conf_threshold, nms_threshold):
 def post_process2(frame, outs, conf_threshold, nms_threshold):
     frame_height = frame.shape[0]
     frame_width = frame.shape[1]
-    
+
     # Scan through all the bounding boxes output from the network and keep only
     # the ones with high confidence scores. Assign the box's class label as the
     # class with the highest score.
@@ -226,17 +229,19 @@ def refined_box(left, top, width, height):
 
 
 
-class FaceRecog():
+class FaceRecog_Cam():
     def __init__(self):
         # Using OpenCV to capture from device 0. If you have trouble capturing
         # from a webcam, comment the line below out and use a video file
         # instead.
         print('init')
         self.camera = camera.VideoCamera()
-        
+        #self.vs = WebcamVideoStream(src=0).start()
+        #video_fps = self.camera.get(cv2.CAP_PROP_FPS)
+        #print(video_fps)
         self.known_face_encodings = []
         self.known_face_names = []
-        
+
         # Load sample pictures and learn how to recognize it.
         dirname = 'knowns'
         files = os.listdir(dirname)
@@ -248,7 +253,7 @@ class FaceRecog():
                 img = face_recognition.load_image_file(pathname)
                 face_encoding = face_recognition.face_encodings(img)[0]
                 self.known_face_encodings.append(face_encoding)
-        
+
         # Initialize some variables
         self.face_locations = []
         self.face_encodings = []
@@ -261,21 +266,22 @@ class FaceRecog():
     def get_frame(self):
         # Grab a single frame of video
         frame = self.camera.get_frame()
-        #print(frame)
+        #frame=self.vs.read()
+        
         # Create a 4D blob from a frame.
         blob = cv2.dnn.blobFromImage(frame, 1 / 255, (IMG_WIDTH, IMG_HEIGHT),
                                      [0, 0, 0], 1, crop=False)
         # Sets the input to the network
         net.setInput(blob)
-        
-        
+
+
         outs = net.forward(get_outputs_names(net))
-        
+
         # Remove the bounding boxes with low confidence
         #[top, right, bottom, left])
         #faces = post_process2(frame, outs, CONF_THRESHOLD, NMS_THRESHOLD)
         #print(faces)
-        
+
         # Resize frame of video to 1/4 size for faster face recognition processing
         small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
         #small_faces = cv2.resize(faces, (0, 0), fx=0.25, fy=0.25)
@@ -291,7 +297,7 @@ class FaceRecog():
             # Find all the faces and face encodings in the current frame of video
 #            self.face_locations = face_recognition.face_locations(rgb_small_frame)
 #self.face_locations = faces
-            print(faces)
+#            print(faces)
             self.face_encodings = face_recognition.face_encodings(rgb_small_frame, faces)
 #self.face_encodings = face_recognition.face_encodings(frame, faces)
 
@@ -299,37 +305,64 @@ class FaceRecog():
             for face_encoding in self.face_encodings:
                 # See if the face is a match for the known face(s)
                 distances = face_recognition.face_distance(self.known_face_encodings, face_encoding)
-                min_value = min(distances)
-                
-                # tolerance: How much distance between faces to consider it a match. Lower is more strict.
-                # 0.6 is typical best performance.
-                name = "Unknown"
-                if min_value < 0.45:
-                    index = np.argmin(distances)
-                    name = self.known_face_names[index]
-                
-                self.face_names.append(name)
-        
-        self.process_this_frame = not self.process_this_frame
-        
+                print(distances)
+                if distances.all():
+                    min_value = min(distances)
+                    # tolerance: How much distance between faces to consider it a match. Lower is more strict.
+                    # 0.6 is typical best performance.
+                    name = "Unknown"
+                    if min_value < 0.4:
+                        index = np.argmin(distances)
+                        name = self.known_face_names[index]
+
+                    self.face_names.append(name)
+    
+                else:
+                    name = "Unknown"
+                    self.face_names.append(name)
+
+                    #self.process_this_frame = not self.process_this_frame
+
         # Display the results
         # return => left top right bottom
-        
+
         for (top, right, bottom, left), name in zip(faces, self.face_names):
             # Scale back up face locations since the frame we detected in was scaled to 1/4 size
             top *= 4
             right *= 4
             bottom *= 4
             left *= 4
+                
+            if name == 'Unknown':
+                # Extract the region of the image that contains the face
+                face_image = frame[top:bottom, left:right]
+                # Blur the face image
+                face_image = cv2.GaussianBlur(face_image, (99, 99), 30)
+                # Put the blurred face region back into the frame image
+                frame[top:bottom, left:right] = face_image
+
+                ### resize 사용하여 모자이크
+#            if name == 'Unknown':
+#                face_img = frame[top:bottom, left:right]
+#                a=(right-left)//30
+#                b=(bottom-top)//30
+#                if a <= 0 :
+#                    a=1
+#                if b <= 0 :
+#                    b=1
+#                face_img = cv2.resize(face_img, (a, b))
+#                face_img = cv2.resize(face_img, (right-left, bottom-top), interpolation=cv2.INTER_AREA)
+#
+#                frame[top:bottom, left:right]=face_img
 
             # Draw a box around the face
             cv2.rectangle(frame, (left, top), (right, bottom+10), (0, 0, 255), 2)
-            
+
             # Draw a label with a name below the face
             #cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
             font = cv2.FONT_HERSHEY_DUPLEX
             cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
-        
+
         return frame
 
     def get_jpg_bytes(self):
@@ -340,3 +373,108 @@ class FaceRecog():
         ret, jpg = cv2.imencode('.jpg', frame)
         return jpg.tobytes()
 
+
+
+
+class FaceRecog_video():
+    def __init__(self):
+        # Using OpenCV to capture from device 0. If you have trouble capturing
+        # from a webcam, comment the line below out and use a video file
+        # instead.
+        print('init')
+        #self.camera = camera.VideoCamera()
+
+        self.known_face_encodings = []
+        self.known_face_names = []
+
+        # Load sample pictures and learn how to recognize it.
+        dirname = 'knowns'
+        files = os.listdir(dirname)
+        for filename in files:
+            name, ext = os.path.splitext(filename)
+            if ext == '.jpg':
+                self.known_face_names.append(name)
+                pathname = os.path.join(dirname, filename)
+                img = face_recognition.load_image_file(pathname)
+                face_encoding = face_recognition.face_encodings(img)[0]
+                self.known_face_encodings.append(face_encoding)
+
+        # Initialize some variables
+        self.face_locations = []
+        self.face_encodings = []
+        self.face_names = []
+        self.process_this_frame = True
+
+        print(self.known_face_names)
+
+    def get_frame(self,frame):
+
+        print('name = ',self.face_names)
+
+        # Create a 4D blob from a frame.
+        blob = cv2.dnn.blobFromImage(frame, 1 / 255, (IMG_WIDTH, IMG_HEIGHT),
+                                     [0, 0, 0], 1, crop=False)
+        # Sets the input to the network
+        net.setInput(blob)
+
+
+        outs = net.forward(get_outputs_names(net))
+                                     # Resize frame of video to 1/4 size for faster face recognition processing
+        small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
+                                     #small_faces = cv2.resize(faces, (0, 0), fx=0.25, fy=0.25)
+
+                                     # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
+        rgb_small_frame = small_frame[:, :, ::-1]
+                                     #rgb_small_faces = small_faces[:, :, ::-1]
+        faces = post_process2(rgb_small_frame, outs, CONF_THRESHOLD, NMS_THRESHOLD)
+
+                                     # Only process every other frame of video to save time
+        if self.process_this_frame:
+            print('process start')
+
+            print(faces)
+            self.face_encodings = face_recognition.face_encodings(rgb_small_frame, faces)
+            print(self.face_encodings)
+
+            self.face_names = []
+            for face_encoding in self.face_encodings:
+                                             # See if the face is a match for the known face(s)
+                distances = face_recognition.face_distance(self.known_face_encodings, face_encoding)
+                min_value = min(distances)
+
+                                             # tolerance: How much distance between faces to consider it a match. Lower is more strict.
+                                             # 0.6 is typical best performance.
+                name = "Unknown"
+                if min_value < 0.45:
+                    index = np.argmin(distances)
+                    name = self.known_face_names[index]
+                print(name)
+                self.face_names.append(name)
+
+        self.process_this_frame = not self.process_this_frame
+
+                                                         # Display the results
+                                                         # return => left top right bottom
+
+        for (top, right, bottom, left), name in zip(faces, self.face_names):
+                                                             # Scale back up face locations since the frame we detected in was scaled to 1/4 size
+            top *= 4
+            right *= 4
+            bottom *= 4
+            left *= 4
+
+                                                                             
+            cv2.rectangle(frame, (left, top), (right, bottom+10), (0, 0, 255), 2)
+            font = cv2.FONT_HERSHEY_DUPLEX
+            cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+
+
+        return frame
+
+    def get_jpg_bytes(self):
+        frame = self.get_frame()
+    # We are using Motion JPEG, but OpenCV defaults to capture raw images,
+    # so we must encode it into JPEG in order to correctly display the
+    # video stream.
+        ret, jpg = cv2.imencode('.jpg', frame)
+        return jpg.tobytes()
