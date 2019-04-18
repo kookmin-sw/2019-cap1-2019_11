@@ -1,79 +1,86 @@
 
 
-**ÆÀÆäÀÌÁö ÁÖ¼Ò** -> https://kookmin-sw.github.io/2019-cap1-2019_11/
+#Project. Auto Blur With Object Detection
+==========================================
+#Team. Bblur
+==========================================
 
-# Team. Bblur
-
-## 1. ÇÁ·ÎÀèÆ® ¼Ò°³
-> À¯Æ©ºê¸¦ ÇÊµÎ·Î ÇÑ ¿µ»ó ½ÃÀåÀº ÃÖ±Ù±îÁö Áö¼ÓÀûÀ¸·Î Å©°Ô ¼ºÀåÇÏ°í ÀÖ´Ù.±×·±µ¥ ½ÃÀåÀÌ Ä¿Áö°í ÀÖ´Â ¸¸Å­ ¹®Á¦Á¡µµ ¹ß»ıÇÏ°í ÀÖ´Ù.
-°°ÀÌ ±æ°Å¸®¸¦ Áö³ª°¡´Ù ¾ó±¼ÀÌ ÂïÇô ¹Ù·Î ½Ç½Ã°£ ¹æ¼Û¿¡ ³ëÃâµÇ´Â ¹®Á¦°¡ ¸¹¾ÆÁö°í ÀÖ´Ù. ¶Ç´Â ÇàÀÎÀÇ ¾ó±¼ÀÌ ÂïÇôÀÖ´Â ¿µ»óÀ» ÆíÁı¾øÀÌ ¾÷·ÎµåÇÏ´Â ¹®Á¦µµ ÀÖ´Ù. °Ô´Ù°¡ ±âÁ¸ÀÇ TV ¹üÁË ¿ëÀÇÀÚ »ı¹æ¼Û È­¸éÀ» ¼ÛÃâÇÒ ¶§µµ ÃÊ»ó±Ç º¸È£¸¦ ÇÊ¿ä·Î ÇÏ´Â »óÈ²ÀÌ ÀÖ´Ù.
-¿ì¸®´Â À§¿Í °°Àº ¹®Á¦¿¡ ÁÖ¸ñÇÏ¿© ¿ì¸®´Â ÀÌ¹ÌÁö³ª ´Ü¼ø ¿µ»ó ¶Ç´Â ½Ç½Ã°£ ¿µ»óÀ» ÀÔ·ÂÀ¸·Î ¹Ş¾Æ »ç¿ëÀÚ°¡ ¼³Á¤ÇÑ Å½»ö ¿É¼Ç(¾ó±¼ ¶Ç´Â »ç¶÷ ÀüÃ¼)¿¡ µû¶ó ÀÚµ¿À¸·Î ºí·¯Ã³¸® ÇØÁØ ÈÄ Ãâ·ÂÇØÁÖ´Â ±â´ÉÀ» °¡Áø ÇÁ·Î±×·¥À» Á¦°øÇÑ´Ù.
+**íŒ€í˜ì´ì§€ ì£¼ì†Œ** -> https://kookmin-sw.github.io/2019-cap1-2019_11/
 
 
+## 1. í”„ë¡œì íŠ¸ ì†Œê°œ
 
-## 2. ¼Ò°³ ¿µ»ó
+> ìœ íŠœë¸Œë¥¼ í•„ë‘ë¡œ í•œ ì˜ìƒ ì‹œì¥ì€ ìµœê·¼ê¹Œì§€ ì§€ì†ì ìœ¼ë¡œ í¬ê²Œ ì„±ì¥í•˜ê³  ìˆë‹¤.ê·¸ëŸ°ë° ì‹œì¥ì´ ì»¤ì§€ê³  ìˆëŠ” ë§Œí¼ ë¬¸ì œì ë„ ë°œìƒí•˜ê³  ìˆë‹¤.
+ê¸¸ê±°ë¦¬ë¥¼ ì§€ë‚˜ê°€ë‹¤ ì–¼êµ´ì´ ì°í˜€ ë°”ë¡œ ì‹¤ì‹œê°„ ë°©ì†¡ì— ë…¸ì¶œë˜ëŠ” ë¬¸ì œê°€ ë§ì•„ì§€ê³  ìˆë‹¤. ë˜ëŠ” í–‰ì¸ì˜ ì–¼êµ´ì´ ì°í˜€ìˆëŠ” ì˜ìƒì„ í¸ì§‘ì—†ì´ ì—…ë¡œë“œí•˜ëŠ” ë¬¸ì œë„ ìˆë‹¤. ê²Œë‹¤ê°€ ê¸°ì¡´ì˜ TV ë²”ì£„ ìš©ì˜ì ìƒë°©ì†¡ í™”ë©´ì„ ì†¡ì¶œí•  ë•Œë„ ì´ˆìƒê¶Œ ë³´í˜¸ë¥¼ í•„ìš”ë¡œ í•˜ëŠ” ìƒí™©ì´ ìˆë‹¤. ìš°ë¦¬ëŠ” ìœ„ì™€ ê°™ì€ ë¬¸ì œì— ì£¼ëª©í•˜ì—¬ ìš°ë¦¬ëŠ” ì´ë¯¸ì§€ë‚˜ ë‹¨ìˆœ ì˜ìƒ ë˜ëŠ” ì‹¤ì‹œê°„ ì˜ìƒì„ ì…ë ¥ìœ¼ë¡œ ë°›ì•„ í•™ìŠµ ëœ ì–¼êµ´ì´ ì•„ë‹ˆë©´  ìë™ìœ¼ë¡œ ë¸”ëŸ¬ì²˜ë¦¬ í•´ì¤€ í›„ ì¶œë ¥í•´ì£¼ëŠ” ê¸°ëŠ¥ì„ ê°€ì§„ í”„ë¡œê·¸ë¨ì„ ì œê³µí•œë‹¤. ì¶”ê°€ì ì¸ ê¸°ëŠ¥ìœ¼ë¡œ,ë°©ì†¡ì‹¬ì˜ ê´€í•œ ê·œì •ì— ì˜í•˜ë©´ íŠ¹ì • ë°©ì†¡ì—ì„œëŠ” ë¸Œëœë“œ ë¡œê³ ë¥¼ ë…¸ì¶œì‹œí‚¤ëŠ” í˜•íƒœì˜ ê´‘ê³ ëŠ” ê¸ˆì§€ë˜ê³ ìˆë‹¤,ê·¸ë¦¬ê³  ì´ ì‘ì—…ì„ ë¸Œëœë“œ ë¡œê³ ì— ê²€ì€ í…Œì´í”„ë¥¼ ë¶™ì´ê±°ë‚˜ í¸ì§‘í•  ë•Œ ì§ì ‘ ëª¨ìì´í¬ë¥¼ í•˜ê³ ìˆë‹¤. ì´ëŸ¬í•œ ì‘ì—…ì„ ìˆ˜ì‘ì—…ìœ¼ë¡œ í•˜ì—¬ì„œ ì¸ë ¥ì˜ ë‚­ë¹„ê°€ ì‹¬í•˜ë‹¤. ì´ëŸ¬í•œ ë¬¸ì œì ì„ ì¸ì‹í•˜ê³  ìš°ë¦¬ëŠ” ì´ë¯¸ì§€ ì…ë ¥ ë° ì˜ìƒì—ì„œ ë¸Œëœë“œ ë¡œê³ ë¥¼ ì°¾ê³  ê·¸ ë¡œê³ ì— ëŒ€í•˜ì—¬ ìë™ìœ¼ë¡œ ë¸”ëŸ¬ ì²˜ë¦¬ë¥¼ í•´ì¤€ í›„ ì¶œë ¥í•´ì£¼ëŠ” ê¸°ëŠ¥ì„ ì œê³µí•œë‹¤.
+
+## 2. Abstract
+
+> The YouTube-led video market continues to grow.However, as the market is growing, problems are also occurring. There is a growing problem of being exposed to real-time broadcasting as the face is shot through the streets. Or the image of the face of the passerby is uploaded without editing. In addition, there is a situation in which the right of privacy is protected even when transmitting the live screen of a TV crime suspect.We pay attention to the above problem, and we provide a program that has an image, a simple image, or a real-time image as inputs and automatically blur the processed face and output it. As an additional function, according to the regulation on broadcast review, advertising in the form of exposing the brand logo is prohibited in certain broadcasts, and the task is directly mosaicking the brand logo when attaching a black tape to the brand logo or editing the image. This is a waste of manpower because people have to work directly. 
+Recognizing this problem, we provide a function to detect for brand logo in image input and image, and to automatically blur the logo and output it.
+
+## 3. ì†Œê°œ ì˜ìƒ
 
  [![Video Label](https://img.youtube.com/vi/RmdcH2qJsM0/0.jpg)](https://youtu.be/RmdcH2qJsM0)
 
 
-## 3. ÆÀ ¼Ò°³
+## 4. íŒ€ ì†Œê°œ
 
-<img src =./pic/±è¿µ¸¸±³¼ö´Ô.jpeg width="20%" height="20%">
-
-```
-* Áöµµ±³¼ö´Ô : ±è ¿µ ¸¸ ±³¼ö´Ô
-* ÀÌ¸ŞÀÏ : ymkim@kookmin.ac.kr
-```
-
-
-<img src =./pic/¿ë¿í.jpeg width="20%" height="20%">
+<img src =./pic/ê¹€ì˜ë§Œêµìˆ˜ë‹˜.jpeg width="20%" height="20%">
 
 ```
-* ±è ¿ë ¿í (ÆÀÀå)
+* ì§€ë„êµìˆ˜ë‹˜ : ê¹€ ì˜ ë§Œ êµìˆ˜ë‹˜
+* ì´ë©”ì¼ : ymkim@kookmin.ac.kr
+```
+
+
+<img src =./pic/ìš©ìš±.jpeg width="20%" height="20%">
+
+```
+* ê¹€ ìš© ìš± (íŒ€ì¥)
 * Tel: 010-2934-9007
 * Github: [https://github.com/Kim-yonguk](https://github.com/Kim-yonguk)
-* Role : Object Detection ¸ğµ¨ ¿¬±¸ ¹× »ç¿ë, Àü¹İÀûÀÎ ÇÁ·Î¼¼½º °ü¸®
+* Role :  Team Management , Object detectionëª¨ë¸ ì—°êµ¬ì™€ ì‚¬ìš© ë° ì›¹ ê°œë°œ
 ```
-<img src =./pic/´ëÈñ.jpeg width="20%" height="20%">
+<img src =./pic/ëŒ€í¬.jpeg width="20%" height="20%">
 
 ```
-* ±è ´ë Èñ (ÆÀ¿ø)
+* ê¹€ ëŒ€ í¬ (íŒ€ì›)
 * Tel: 010-6788-5132
 * Github: [https://github.com/dnap512](https://github.com/dnap512)
-* Role : Object Detection ¸ğµ¨ ¿¬±¸ ¹× »ç¿ë
+* Role : Object detection ëª¨ë¸ ì—°êµ¬ì™€ ì‚¬ìš© ë° ì›¹ ê°œë°œ
 ```
-<img src =./pic/º¸°æ.jpeg width="20%" height="20%">
+<img src =./pic/ë³´ê²½.jpeg width="20%" height="20%">
 
 ```
-* ±Ç º¸ °æ (ÆÀ¿ø)
+* ê¶Œ ë³´ ê²½ (íŒ€ì›)
 * Tel: 010-6282-1602
 * Github: [https://github.com/bokyeung](https://github.com/bokyeung)
-* Role : blur Ã³¸®±â´É ¹× ¿µ»óÃ³¸®
+* Role : ì–´í”Œë¦¬ì¼€ì´ì…˜ ë° ì„œë²„ ê°œë°œ
 ```
-<img src =./pic/³ª¿µ.jpeg width="20%" height="20%">
+<img src =./pic/ë‚˜ì˜.jpeg width="20%" height="20%">
 
 ```
-* ÀÌ ³ª ¿µ (ÆÀ¿ø)
+* ì´ ë‚˜ ì˜ (íŒ€ì›)
 * Tel: 010-9745-9767
 * Github: [https://github.com/bokiri409](https://github.com/bokiri409)
-* Role :  blur Ã³¸®±â´É ¹× ¿µ»óÃ³¸®
+* Role :  ì–´í”Œë¦¬ì¼€ì´ì…˜ ë° ì„œë²„ ê°œë°œ
 ```
-<img src =./pic/½ÂÈÆ.jpeg width="20%" height="20%">
+<img src =./pic/ìŠ¹í›ˆ.jpeg width="20%" height="20%">
 
 ```
-* Ã¤ ½Â ÈÆ (ÆÀ¿ø)
+* ì±„ ìŠ¹ í›ˆ (íŒ€ì›)
 * Tel: 010-7773-6999
 * Github: [https://github.com/SeunghunChae/opencv](https://github.com/SeunghunChae/opencv)
-* Role :  Gui, openCV, °´Ã¼Å½Áö ¸ğµ¨ ±¸Çö
+* Role :   UX / UI
 ```
 
 
 
 
-## 4. »ç¿ë¹ı
+## 5. ì‚¬ìš©ë²•
 
-¼Ò½ºÄÚµåÁ¦Ãâ½Ã ¼³Ä¡¹ıÀÌ³ª »ç¿ë¹ıÀ» ÀÛ¼ºÇÏ¼¼¿ä.
+ì†ŒìŠ¤ì½”ë“œì œì¶œì‹œ ì„¤ì¹˜ë²•ì´ë‚˜ ì‚¬ìš©ë²•ì„ ì‘ì„±í•˜ì„¸ìš”.
 
-## 5. ±âÅ¸
+## 6. ê¸°íƒ€
 
-Ãß°¡ÀûÀÎ ³»¿ëÀº ÀÚÀ¯·Ó°Ô ÀÛ¼ºÇÏ¼¼¿ä.
+ì¶”ê°€ì ì¸ ë‚´ìš©ì€ ììœ ë¡­ê²Œ ì‘ì„±í•˜ì„¸ìš”.
