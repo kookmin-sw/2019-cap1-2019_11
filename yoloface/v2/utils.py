@@ -1,16 +1,3 @@
-# *******************************************************************
-#
-# Author : Thanh Nguyen, 2018
-# Email  : sthanhng@gmail.com
-# Github : https://github.com/sthanhng
-#
-# BAP, AI Team
-# Face detection using the YOLOv3 algorithm
-#
-# Description : utils.py
-# This file contains the code of the parameters and help functions
-#
-# *******************************************************************
 
 
 import datetime
@@ -277,10 +264,6 @@ class FaceRecog_Cam():
 
         outs = net.forward(get_outputs_names(net))
 
-        # Remove the bounding boxes with low confidence
-        #[top, right, bottom, left])
-        #faces = post_process2(frame, outs, CONF_THRESHOLD, NMS_THRESHOLD)
-        #print(faces)
 
         # Resize frame of video to 1/4 size for faster face recognition processing
         small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
@@ -294,18 +277,13 @@ class FaceRecog_Cam():
         # Only process every other frame of video to save time
         if self.process_this_frame:
             print('process start')
-            # Find all the faces and face encodings in the current frame of video
-#            self.face_locations = face_recognition.face_locations(rgb_small_frame)
-#self.face_locations = faces
-#            print(faces)
             self.face_encodings = face_recognition.face_encodings(rgb_small_frame, faces)
-#self.face_encodings = face_recognition.face_encodings(frame, faces)
 
             self.face_names = []
             for face_encoding in self.face_encodings:
                 # See if the face is a match for the known face(s)
                 distances = face_recognition.face_distance(self.known_face_encodings, face_encoding)
-                print(distances)
+#                print(distances)
                 if distances.all():
                     min_value = min(distances)
                     # tolerance: How much distance between faces to consider it a match. Lower is more strict.
@@ -321,11 +299,7 @@ class FaceRecog_Cam():
                     name = "Unknown"
                     self.face_names.append(name)
 
-                    #self.process_this_frame = not self.process_this_frame
-
-        # Display the results
-        # return => left top right bottom
-
+    
         for (top, right, bottom, left), name in zip(faces, self.face_names):
             # Scale back up face locations since the frame we detected in was scaled to 1/4 size
             top *= 4
@@ -361,7 +335,7 @@ class FaceRecog_Cam():
             # Draw a label with a name below the face
             #cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
             font = cv2.FONT_HERSHEY_DUPLEX
-            cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+#            cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
         return frame
 
@@ -430,7 +404,7 @@ class FaceRecog_video():
 
                                      # Only process every other frame of video to save time
         if self.process_this_frame:
-            print('process start')
+            
 
             print(faces)
             self.face_encodings = face_recognition.face_encodings(rgb_small_frame, faces)
@@ -442,8 +416,6 @@ class FaceRecog_video():
                 distances = face_recognition.face_distance(self.known_face_encodings, face_encoding)
                 min_value = min(distances)
 
-                                             # tolerance: How much distance between faces to consider it a match. Lower is more strict.
-                                             # 0.6 is typical best performance.
                 name = "Unknown"
                 if min_value < 0.45:
                     index = np.argmin(distances)
@@ -453,11 +425,7 @@ class FaceRecog_video():
 
         self.process_this_frame = not self.process_this_frame
 
-                                                         # Display the results
-                                                         # return => left top right bottom
-
         for (top, right, bottom, left), name in zip(faces, self.face_names):
-                                                             # Scale back up face locations since the frame we detected in was scaled to 1/4 size
             top *= 4
             right *= 4
             bottom *= 4
@@ -473,8 +441,5 @@ class FaceRecog_video():
 
     def get_jpg_bytes(self):
         frame = self.get_frame()
-    # We are using Motion JPEG, but OpenCV defaults to capture raw images,
-    # so we must encode it into JPEG in order to correctly display the
-    # video stream.
         ret, jpg = cv2.imencode('.jpg', frame)
         return jpg.tobytes()
