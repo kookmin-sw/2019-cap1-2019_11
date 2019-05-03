@@ -32,7 +32,7 @@ class YOLO(object):
         self.model_image_size = args.img_size
         self.known_face_encodings = []
         self.known_face_names = []
-        
+
         dirname='knowns'
         files=os.listdir(dirname)
         for filename in files:
@@ -43,7 +43,7 @@ class YOLO(object):
                 img = face_recognition.load_image_file(pathname)
                 face_encoding = face_recognition.face_encodings(img)[0]
                 self.known_face_encodings.append(face_encoding)
-        
+
         # Initialize some variables
         self.face_locations = []
         self.face_encodings = []
@@ -121,7 +121,7 @@ class YOLO(object):
                               image.height - (image.height % 32))
             boxed_image = letterbox_image(image, new_image_size)
         image_data = np.array(boxed_image, dtype='float32')
-        print(image_data.shape)
+        # print(image_data.shape)
         image_data /= 255.
         # add batch dimension
         image_data = np.expand_dims(image_data, 0)
@@ -134,7 +134,7 @@ class YOLO(object):
             })
         print('*** Found {} face(s) for this image'.format(len(out_boxes)))
         thickness = (image.size[0] + image.size[1]) // 400
-        
+
         final_boxes=[]
 
         for i, c in reversed(list(enumerate(out_classes))):
@@ -145,12 +145,12 @@ class YOLO(object):
             draw = ImageDraw.Draw(image)
 
             top, left, bottom, right = box
-            top = max(0, np.floor(top + 0.5).astype('int32'))
-            left = max(0, np.floor(left + 0.5).astype('int32'))
-            bottom = min(image.size[1], np.floor(bottom + 0.5).astype('int32'))
-            right = min(image.size[0], np.floor(right + 0.5).astype('int32'))
+            top = max(0, np.floor(top + 0.5).astype('int32'))-20
+            left = max(0, np.floor(left + 0.5).astype('int32'))-20
+            bottom = min(image.size[1], np.floor(bottom + 0.5).astype('int32'))+20
+            right = min(image.size[0], np.floor(right + 0.5).astype('int32'))+20
 
-            
+
             final_boxes.append([top,right,bottom,left])
             print('top : ', top,' right : ', right,' bottom : ', bottom, ' left : ',left)
             for thk in range(thickness):
@@ -189,8 +189,8 @@ def detect_video(model, video_path=None, output=None):
         raise IOError("Couldn't open webcam or video")
 
     video_fourcc = cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')
-    video_fps = vid.get(cv2.CAP_PROP_FPS)
-    print(video_fps)
+    video_fps = vid.get(cv2.CAP_PROP_FPS)   # 29.8~~~... => 30
+    print('fps = ', video_fps)
 
     # the size of the frames to write
     video_size = (int(vid.get(cv2.CAP_PROP_FRAME_WIDTH)),
@@ -201,74 +201,89 @@ def detect_video(model, video_path=None, output=None):
         out = cv2.VideoWriter(os.path.join(output, output_fn), video_fourcc, video_fps, video_size)
 
     while True:
+        # print('read processing')
         ret, frame = vid.read()
         if ret:
-            
+
             small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
             rgb_small_frame = small_frame[:, :, ::-1]
-            
+
             image = Image.fromarray(rgb_small_frame)
             image, faces, final_boxes= model.detect_image(image)
-            
+
             if model.process_this_frame:
-                print('process_this_frame')
+                # print('process_this_frame')
                 model.face_encodings = face_recognition.face_encodings(rgb_small_frame, final_boxes)
-            
+
                 model.face_names=[]
-            
+
                 for face_encoding in model.face_encodings :
                     distances = face_recognition.face_distance(model.known_face_encodings, face_encoding)
-                    min_value = min(distances)
+
+                    if distances.all():
+                        min_value = min(distances)
+                        # print('min_v : ',min_value)
+                        # tolerance: How much distance between faces to consider it a match. Lower is more strict.
+                        # 0.6 is typical best performance.
+                        name = "Unknown"
+                        if min_value < 0.37:
+                            index = np.argmin(distances)
+                            name = model.known_face_names[index]
+
+                        model.face_names.append(name)
+                        print('name = ', name)
+                        print('min_v : ',min_value)
+                        # print('distance = ', distances)
+
+                    else:
+                        name = "Unknown"
+                        model.face_names.append(name)
+                        print('name = ', name)
+                        # print('distance = ', distances)
 
 
-                    name = "Unknown"
-                    if min_value < 0.42 :
-                        index=np.argmin(distances)
-                        name=model.known_face_names[index]
-                    model.face_names.append(name)
-                    
-            model.process_this_frame=not model.process_this_frame
-            
+            # model.process_this_frame=not model.process_this_frame
+
 
             for (top,right,bottom,left), name in zip(final_boxes, model.face_names):
-            
+
                 top *= 4
                 right *= 4
                 bottom *= 4
                 left *= 4
-                #### GaussianBlur 방식
-                #
-#                if name == 'Unknown':
-#                    # Extract the region of the image that contains the face
-#                    face_image = frame[top:bottom, left:right]
-#
-#                    # Blur the face image
-#                    face_image = cv2.GaussianBlur(face_image, (99, 99), 30)
-#
-#                    # Put the blurred face region back into the frame image
-#                    frame[top:bottom, left:right] = face_image
+                ### GaussianBlur 방식
+
+                if name == 'Unknown':
+                   # Extract the region of the image that contains the face
+                    face_image = frame[top:bottom, left:right]
+
+                    # Blur the face image
+                    face_image = cv2.GaussianBlur(face_image, (99, 99), 30)
+                    face_image = cv2.medianBlur(face_image,9)
+                    # Put the blurred face region back into the frame image
+                    frame[top:bottom, left:right] = face_image
 
                 ### resize 사용하여 모자이크
-                if name == 'Unknown':
-                    face_img = frame[top:bottom, left:right]
-                    a=(right-left)//30
-                    b=(bottom-top)//30
-                    if a <= 0 :
-                        a=1
-                    if b <= 0 :
-                        b=1
-                    face_img = cv2.resize(face_img, (a, b))
-                    face_img = cv2.resize(face_img, (right-left, bottom-top), interpolation=cv2.INTER_AREA)
-
-                    frame[top:bottom, left:right]=face_img
+                # if name == 'Unknown':
+                #     face_img = frame[top:bottom, left:right]
+                #     a=(right-left)//30
+                #     b=(bottom-top)//30
+                #     if a <= 0 :
+                #         a=1
+                #     if b <= 0 :
+                #         b=1
+                #     face_img = cv2.resize(face_img, (a, b))
+                #     face_img = cv2.resize(face_img, (right-left, bottom-top), interpolation=cv2.INTER_AREA)
+                #
+                #     frame[top:bottom, left:right]=face_img
 
                 cv2.rectangle(frame, (left, top), (right, bottom+10), (0, 0, 255), 2)
                 font = cv2.FONT_HERSHEY_DUPLEX
-                cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
-                
+#                cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+
                 if video_path == 'stream':
                     cv2.imshow("face", frame)
-                        
+
             if isOutput:
                 out.write(frame)
             if cv2.waitKey(1) & 0xFF == ord('q'):
