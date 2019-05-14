@@ -154,12 +154,25 @@ class YOLO(object):
             draw = ImageDraw.Draw(image)
 
             top, left, bottom, right = box
+            # tmpTop=top*0.05
+            # tmpLeft=left*0.03
+            # tmpBottom=bottom*0.05
+            # tmpRight=right*0.04
+            # # top = max(0, np.floor(top + 0.5).astype('int32'))-int(tmpTop)
+            # # left = max(0, np.floor(left + 0.5).astype('int32'))+int(tmpLeft)
+            # # bottom = min(image.size[1], np.floor(bottom + 0.5).astype('int32'))+int(tmpBottom)
+            # # right = min(image.size[0], np.floor(right + 0.5).astype('int32'))+int(tmpRight)
+            #
+            # top = max(0, np.floor(top + 0.5).astype('int32'))
+            # left = max(0, np.floor(left + 0.5).astype('int32'))
+            # bottom = min(image.size[1], np.floor(bottom + 0.5).astype('int32'))
+            # right = min(image.size[0], np.floor(right + 0.5).astype('int32'))
             tmpTop=top*0.05
-            tmpLeft=left*0.03
+            tmpLeft=left*0.04
             tmpBottom=bottom*0.05
             tmpRight=right*0.04
             top = max(0, np.floor(top + 0.5).astype('int32'))-int(tmpTop)
-            left = max(0, np.floor(left + 0.5).astype('int32'))+int(tmpLeft)
+            left = max(0, np.floor(left + 0.5).astype('int32'))
             bottom = min(image.size[1], np.floor(bottom + 0.5).astype('int32'))+int(tmpBottom)
             right = min(image.size[0], np.floor(right + 0.5).astype('int32'))+int(tmpRight)
 
@@ -205,6 +218,8 @@ def detect_video(model, video_path=None, output=None):
     video_fps = vid.get(cv2.CAP_PROP_FPS)   # 29.8~~~... => 30
     print('fps = ', video_fps)
     tracker = cv2.TrackerCSRT_create()
+    # tracker = cv2.TrackerMOSSE_create()
+    # tracker = cv2.TrackerKCF_create()
     isTracing=False
     isStart=False
     cnt=0
@@ -224,7 +239,7 @@ def detect_video(model, video_path=None, output=None):
         cnt+=1
         if ret:
 
-            if cnt % 2 == 1 :
+            if cnt % 3 == 1 :
 
                 small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
                 rgb_small_frame = small_frame[:, :, ::-1]
@@ -233,6 +248,9 @@ def detect_video(model, video_path=None, output=None):
                 image, faces, final_boxes= model.detect_image(image)
 
                 if isTracing:
+
+                    # rect=(top,left,bottom,right)
+                    # rect=(left,top,width,height) #new
                     success, box=tracker.update(frame)
                     print('box = ',box)
                     l,t,w,h=box
@@ -242,12 +260,17 @@ def detect_video(model, video_path=None, output=None):
                     h=int(h)
                     isStart=True
 
-                    tracing_image = frame[t:t+h, l:l+w]
+                    b=t+h
+                    r=l+w
+
+                    tracing_image = frame[t:b, l:r]
                     cv2.imwrite('1.jpg',tracing_image)
                     # print(tracing_image)
                     # a=tracing_image
                     # cv2.imshow("face", tracing_image)
-                    cv2.rectangle(frame, pt1=(int(l),int(t)), pt2=(int(l)+int(w), int(t)+int(h)) , color=(255,255,255), thickness=3)
+                    # cv2.rectangle(frame, pt1=(int(t),int(l)), pt2=(int(t)+int(h),int(l)+int(w)) , color=(255,255,255), thickness=3)
+                    # cv2.rectangle(frame, pt1=(t,b), pt2=(l,r) , color=(255,255,255), thickness=3)
+                    cv2.rectangle(frame, (l, t), (r, b), (255, 255, 255), 2)
 
                 if model.process_this_frame:
                     # if isStart:
@@ -296,6 +319,10 @@ def detect_video(model, video_path=None, output=None):
                     ### GaussianBlur 방식
 
                     if name == 'Unknown':
+                        left=int(left*1.005)
+                        right=int(right*0.98)
+                        top=int(top*1.05)
+                        bottom=int(bottom*0.98)
                        # Extract the region of the image that contains the face
                         face_image = frame[top:bottom, left:right]
 
@@ -311,18 +338,18 @@ def detect_video(model, video_path=None, output=None):
 
                         if not isTracing:
                             print('isTracing init')
-
-                            width=right*1.2-left
+                            #
+                            # width=right*1.2-left
+                            # height=bottom-top
+                            #
+                            # left=int(left*0.85)
+                            # top=int(top*0.55)
+                            # width=int(width*0.83)
+                            # height=int(height*1.3)
+                            width=right-left
                             height=bottom-top
-
-                            left=int(left*0.85)
-                            top=int(top*0.55)
-                            width=int(width*0.83)
-                            height=int(height*1.3)
-
-                            print('top = ', top, ' left = ',left, ' bottom = ', bottom, 'right = ', right)
-                            # print('left = ', left, ' top = ',top, ' width = ', width, 'height = ', height)
-                            rect=(left,top,width,height)
+                            rect=(int(0.95*left),int(top*0.95),int(width*1.15),int(height*1.15))
+                            # rect=(top,left,bottom,right)
                             tracker.init(frame,rect)
                             isTracing=True
 
@@ -351,11 +378,15 @@ def detect_video(model, video_path=None, output=None):
                         cv2.imshow("face", frame)
 
                 if isStart :
-                    print('l = ',l,' t = ',t, ' w = ',w,' h = ',h)
+                    # print('l = ',l,' t = ',t, ' w = ',w,' h = ',h)
                     # cv2.imshow("face", a)
                     t_image = cv2.imread('1.jpg', cv2.IMREAD_COLOR)
                     # # tracing_image = cv2.GaussianBlur(tracing_image, (99, 99), 30)
-                    frame[t:t+h, l:l+w] = t_image
+
+                    # frame[t:t+h, l:l+w] = t_image
+
+                    frame[t:b, l:r] = t_image # ***** new
+
                     # cv2.imshow("face", frame[t:t+h, l:l+w])
 
                 if isOutput:
@@ -367,6 +398,7 @@ def detect_video(model, video_path=None, output=None):
             else :
 
                 if isTracing:
+
                     success, box=tracker.update(frame)
                     print('box = ',box)
                     l,t,w,h=box
@@ -376,13 +408,17 @@ def detect_video(model, video_path=None, output=None):
                     h=int(h)
                     isStart=True
 
-                    tracing_image = frame[t:t+h, l:l+w]
+                    b=t+h
+                    r=l+w
+
+                    tracing_image = frame[t:b, l:r]
+
                     cv2.imwrite('1.jpg',tracing_image)
                     # print(tracing_image)
                     # a=tracing_image
                     # cv2.imshow("face", tracing_image)
-                    cv2.rectangle(frame, pt1=(int(l),int(t)), pt2=(int(l)+int(w), int(t)+int(h)) , color=(255,255,255), thickness=3)
-
+                    # cv2.rectangle(frame, pt1=(int(l),int(t)), pt2=(int(l)+int(w), int(t)+int(h)) , color=(255,255,255), thickness=3)
+                    cv2.rectangle(frame, (l, t), (r, b), (255, 255, 255), 2)
 
                 for (top,right,bottom,left) in unKnown_box:
                     face_image = frame[top:bottom, left:right]
@@ -398,24 +434,25 @@ def detect_video(model, video_path=None, output=None):
                     print('## ## top = ', top, ' left = ',left, ' bottom = ', bottom, 'right = ', right)
                     if video_path == 'stream':
                         cv2.imshow("face", frame)
-
-                unKnown_box=[]
+                if cnt % 3 == 0 :
+                    unKnown_box=[]
 
                 for (top,right,bottom,left) in Known_box:
                     print('## ## top = ', top, ' left = ',left, ' bottom = ', bottom, 'right = ', right)
-                    
+
                     cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
                     if video_path == 'stream':
                         cv2.imshow("face", frame)
-
-                Known_box=[]
+                if cnt % 3 == 0 :
+                    Known_box=[]
 
                 if isStart :
-                    print('l = ',l,' t = ',t, ' w = ',w,' h = ',h)
+                    # print('l = ',l,' t = ',t, ' w = ',w,' h = ',h)
                     # cv2.imshow("face", a)
                     t_image = cv2.imread('1.jpg', cv2.IMREAD_COLOR)
                     # # tracing_image = cv2.GaussianBlur(tracing_image, (99, 99), 30)
-                    frame[t:t+h, l:l+w] = t_image
+                    # frame[t:t+h, l:l+w] = t_image
+                    frame[t:b, l:r] = t_image
                     # cv2.imshow("face", frame[t:t+h, l:l+w])
 
                 if isOutput:
