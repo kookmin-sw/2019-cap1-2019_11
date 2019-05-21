@@ -2,128 +2,176 @@ from tkinter import *
 import cv2
 import numpy as np
 
-def videoupload(): #파일 오픈 구현할 
+import argparse
+import sys
+import os
+import datetime
+import time
+import face_recognition
+import camera
+
+from utils import *
+import subprocess as sp
+
+from moviepy.tools import subprocess_call
+from moviepy.config import get_setting
+
+#######################################################
+#ffmpeg
+
+
+def ffmpeg_movie_from_frames(filename, folder, fps, digits=6):
+    """
+    Writes a movie out of the frames (picture files) in a folder.
+    Almost deprecated.
+    """
+    s = "%" + "%02d" % digits + "d.png"
+    cmd = [get_setting("FFMPEG_BINARY"), "-y", "-f","image2",
+             "-r", "%d"%fps,
+             "-i", os.path.join(folder,folder) + '/' + s,
+             "-b", "%dk"%bitrate,
+             "-r", "%d"%self.fps,
+             filename]
+
+    subprocess_call(cmd)
+
+
+
+def ffmpeg_extract_subclip(filename, t1, t2, targetname=None):
+    """ makes a new video file playing video file ``filename`` between
+        the times ``t1`` and ``t2``. """
+    name,ext = os.path.splitext(filename)
+    if not targetname:
+        T1, T2 = [int(1000*t) for t in [t1, t2]]
+        targetname = name+ "%sSUB%d_%d.%s"(name, T1, T2, ext)
+
+    cmd = [get_setting("FFMPEG_BINARY"),"-y",
+      "-i", filename,
+      "-ss", "%0.2f"%t1,
+      "-t", "%0.2f"%(t2-t1),
+      "-vcodec", "copy", "-acodec", "copy", targetname]
+
+    subprocess_call(cmd)
+
+
+
+def ffmpeg_merge_video_audio(video,audio,output, vcodec='copy',acodec='copy', ffmpeg_output=False,verbose = True):
+    """ merges video file ``video`` and audio file ``audio`` into one
+        movie file ``output``. """
+    cmd = [get_setting("FFMPEG_BINARY"), "-y", "-i", audio,"-i", video,
+             "-vcodec", vcodec, "-acodec", acodec, output]
+
+    subprocess_call(cmd)
+
+
+
+def ffmpeg_extract_audio(inputfile,output,bitrate=3000,fps=44100):
+    """ extract the sound from a video file and save it in ``output`` """
+    cmd = [get_setting("FFMPEG_BINARY"), "-y", "-i", inputfile, "-ab", "%dk"%bitrate,
+         "-ar", "%d"%fps, output]
+    subprocess_call(cmd)
+
+
+
+def ffmpeg_resize(video,output,size):
+    """ resizes ``video`` to new size ``size`` and write the result
+        in file ``output``. """
+    cmd= [get_setting("FFMPEG_BINARY"), "-i", video, "-vf", "scale=%d:%d"%(res[0], res[1]),
+             output]
+
+    subprocess_call(cmd)
+
+
+######################################################
+
+
+
+
+def videoupload(): #??솁??뵬 ??궎?逾? ?뤃?뗭겱?釉?
     filename = askopenfilename(parent=root) 
     f = open(filename) 
     f.read()
 
 
 def process():
-    if RadioVariaty.get()==1:
-        img =cv2.imread('input.jpg')
-        
-        image_gs = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        face_cascade = cv2.CascadeClassifier("haarcascade_frontalface_alt.xml")
+    if optionradio.get==1: #face detection
+        if typeradio.get==1: #video
+            net = cv2.dnn.readNetFromDarknet(args.model_cfg, args.model_weights)
+            net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
+            net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
+            
+            cap = cv2.VideoCapture("input.mp4")
 
-        face_list = face_cascade.detectMultiScale(image_gs, scaleFactor=1.1, minNeighbors=1, minSize=(50,50))
-        if len(face_list) == 0:
-            print("no face")
+            video_writer = cv2.VideoWriter('output.mp4', cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'),cap.get(cv2.CAP_PROP_FPS),
+                                           (round(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),
+                                            round(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))))
+            #videowriter(outputfile,fourcc,frame,size)
+            #fourcc : codec information
 
-        color = (0, 0, 255)
-        for (x,y,w,h) in face_list:
-            face_img = img[y:y+h, x:x+w]
-            face_img = cv2.resize(face_img, (w//10, h//10))
-            face_img = cv2.resize(face_img, (w, h), interpolation=cv2.INTER_AREA)
-            img[y:y+h, x:x+w] = face_img
-        cv2.imwrite('output.jpg', img)
-    elif RadioVariaty.get()==2:
-        img =cv2.imread('Pedestrians.jpg')
-        
-        image_gs = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        face_cascade = cv2.CascadeClassifier("haarcascade_fullbody.xml")
+            face_recog=FaceRecog_video()
+            while True:
+                has_frame, frame=cap.read()
+                if not has_frame:
+                    print('[i] ==> Done processing!!!')
+                    print('[i] ==> Output file is stored at', os.path.join(args.output_dir, output_file))
+                    cv2.waitKey(1000)
+                    break
+                frame=face_recog.get_frame(frame)
+            # Save the output video to file
+                video_writer.write(frame.astype(np.uint8))
 
-        face_list = face_cascade.detectMultiScale(image_gs, scaleFactor=1.1, minNeighbors=1, minSize=(50,50))
-        if len(face_list) == 0:
-            print("no person")
+                key = cv2.waitKey(1)
+                if key == 27 or key == ord('q'):
+                    print('[i] ==> Interrupted by user!')
+                    break
 
-        color = (0, 0, 255)
-        for (x,y,w,h) in face_list:
-            face_img = img[y:y+h, x:x+w]
-            face_img = cv2.resize(face_img, (w//10, h//10))
-            face_img = cv2.resize(face_img, (w, h), interpolation=cv2.INTER_AREA)
-            img[y:y+h, x:x+w] = face_img
-        cv2.imwrite('output.jpg', img)
+            cap.release()
+            cv2.destroyAllWindows()
+            ffmpeg_extract_audio('input.mp4', 'outAudio.mp3', bitrate=3000, fps=44100)
+            ffmpeg_merge_video_audio('output.mp4', 'outAudio.mp3', 'output_final.mp4', vcodec='copy', acodec='copy', ffmpeg_output=False, verbose=True)
+        elif typeradio.get==2: #webcam
+            net = cv2.dnn.readNetFromDarknet(args.model_cfg, args.model_weights)
+            net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
+            net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
 
-    elif RadioVariaty.get()==3: #face detection - video"
-        capture = cv2.VideoCapture("input.mp4")
+            face_recog=FaceRecog_Cam()
+            while True:
+                frame=face_recog.get_frame()
+                cv2.imshow("Frame", frame)
+                key = cv2.waitKey(1) & 0xFF
 
-        while True:
-            if(capture.get(cv2.CAP_PROP_POS_FRAMES)==capture.get(cv2.CAP_PROP_FRAME_COUNT)):
-                capture.open("input.mp4")
-                
-            ret, frame = capture.read()
-            cv2.imshow("videoFrame", frame)
-        
-            if cv2.waitKey(33)>0: break
-        capture.release()
-        cv2.destroyAllWindows()
+                # if the `q` key was pressed, break from the loop
+                if key == ord("q"):
+                    break
 
-    elif RadioVariaty.get()==4: #human detection - video
-        capture = cv2.VideoCapture("input.mp4")
-
-        while True:
-            if(capture.get(cv2.CAP_PROP_POS_FRAMES)==capture.get(cv2.CAP_PROP_FRAME_COUNT)):
-                capture.open("input.mp4")
-                
-            ret, frame = capture.read()
-            cv2.imshow("videoFrame", frame)
-        
-            if cv2.waitKey(33)>0: break
-        capture.release()
-        cv2.destroyAllWindows()
-
-    elif RadioVariaty.get()==5: #face detection - webcam
-        capture = cv2.VideoCapture(0)
-        capture.set(cv2.CAP_PROP_FRAME_WIDTH, 720)
-        capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-        
-        while True:
-            ret, frame = capture.read()
-            cv2.imshow("videoFrame", frame)
-            if cv2.waitKey(1)>0: break
-            #1ms마다 프레임을 재생, 키입력시 종료 argument는 정
-        capture.release()
-        cv2.destroyAllWindows()
-        
-    elif RadioVariaty.get()==6: #human detection - webcam
-        capture = cv2.VideoCapture(0)
-        capture.set(cv2.CAP_PROP_FRAME_WIDTH, 720)
-        capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-        
-        while True:
-            ret, frame = capture.read()
-            cv2.imshow("videoFrame", frame)
-            if cv2.waitKey(1)>0: break
-            #1ms마다 프레임을 재생, 키입력시 종료 argument는 정
-        capture.release()
-        cv2.destroyAllWindows()
 
 
 window=Tk()        
-window.title("seunghun chae")
-window.geometry("640x400+100+100")#너비*높이, 초기 x, y좌
-window.resizable(True, True)#상하, 좌우
+window.title("Bblur")
+window.geometry("640x400+100+100")
+window.resizable(True, True)
 
-button1 = Button(window, text="video upload", command=videoupload)
+button1 = Button(window, text="file upload", command=videoupload)
 button1.pack()
 entry1 = Entry(window)
 entry1.insert(0,"video address")
-entry1.pack()
+entry1.pack()##援ы쁽以?
+
 label = Label(window, text="option")
 label.pack()
-RadioVariaty=IntVar()
-radio1=Radiobutton(window, text="face detection - image", value=1, variable=RadioVariaty)
-radio1.pack()
-radio2=Radiobutton(window, text="human detection - image", value=2, variable=RadioVariaty)
-radio2.pack()
-radio3=Radiobutton(window, text="face detection - video", value=3, variable=RadioVariaty)
-radio3.pack()
-radio4=Radiobutton(window, text="human detection - video", value=4, variable=RadioVariaty)
-radio4.pack()
-radio5=Radiobutton(window, text="face detection - webcam", value=5, variable=RadioVariaty)
-radio5.pack()
-radio6=Radiobutton(window, text="human detection - webcam", value=6, variable=RadioVariaty)
-radio6.pack()
+
+typeradio=IntVar()
+tradio1=Radiobutton(window, text="video", value=1, variable=typeradio)
+tradio1.pack()
+tradio2=Radiobutton(window, text="webcam", value=2, variable=typeradio)
+tradio2.pack()
+
+optionradio=IntVar()
+oradio1=Radiobutton(window, text="face detection", value=1, variable=optionradio)
+oradio1.pack()
+oradio2=Radiobutton(window, text="logo detection", value=2, variable=optionradio)
+oradio2.pack()
+
 
 button2 = Button(window, text="Convert", command=process)
 button2.pack()
