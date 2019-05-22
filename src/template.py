@@ -2,8 +2,8 @@ from tkinter import *
 
 window=Tk()        
 window.title("Auto Blur with Object Dection")
-window.geometry("350x220")
-window.resizable(True, True)
+window.geometry("350x400")
+window.resizable(False, False)
 window['bg']='lavender'
 
 
