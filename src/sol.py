@@ -1,20 +1,25 @@
 from tkinter import *
-import cv2
-import numpy as np
 
-import argparse
 import sys
 import os
+
 import datetime
 import time
 import face_recognition
+import cv2
 import camera
+import numpy as np
 
 from utils import *
 import subprocess as sp
 
 from moviepy.tools import subprocess_call
 from moviepy.config import get_setting
+
+
+#########################################
+
+
 
 #######################################################
 #ffmpeg
@@ -143,39 +148,38 @@ def process():
                 # if the `q` key was pressed, break from the loop
                 if key == ord("q"):
                     break
-
-
+    
 
 window=Tk()        
-window.title("Bblur")
-window.geometry("640x400+100+100")
-window.resizable(True, True)
+window.title("Auto Blur with Object Dection")
+window.geometry("350x400")
+window.resizable(False, False)
+window['bg']='lavender'
 
-button1 = Button(window, text="file upload", command=videoupload)
-button1.pack()
+
+button1 = Button(window, text="file upload", relief='groove', foreground="LightPink4", command=videoupload)
+button1.pack() # Displaying the button
+button1["bg"]="peach puff"
+
 entry1 = Entry(window)
 entry1.insert(0,"video address")
-entry1.pack()##援ы쁽以?
-
-label = Label(window, text="option")
-label.pack()
+entry1.pack()
 
 typeradio=IntVar()
-tradio1=Radiobutton(window, text="video", value=1, variable=typeradio)
+tradio1=Radiobutton(window, text="video", background="lavender", value=1, variable=typeradio)
 tradio1.pack()
-tradio2=Radiobutton(window, text="webcam", value=2, variable=typeradio)
+tradio2=Radiobutton(window, text="webcam", background="lavender", value=2, variable=typeradio)
 tradio2.pack()
 
 optionradio=IntVar()
-oradio1=Radiobutton(window, text="face detection", value=1, variable=optionradio)
+oradio1=Radiobutton(window, text="face detection", background="lavender", value=1, variable=optionradio)
 oradio1.pack()
-oradio2=Radiobutton(window, text="logo detection", value=2, variable=optionradio)
+oradio2=Radiobutton(window, text="logo detection", background="lavender", value=2, variable=optionradio)
 oradio2.pack()
 
-
-button2 = Button(window, text="Convert", command=process)
+button2 = Button(window, text="Convert", relief='groove', foreground="LightPink4", command=process)
 button2.pack()
-
+button2["bg"]="peach puff"
 
 
 window.mainloop()
