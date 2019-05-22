@@ -1,42 +1,56 @@
 from tkinter import *
 from tkinter.filedialog import *
+from os import path
 
 
 def fileupload():
-    filename = askopenfilename(parent=window,title = "Select input File", filetypes = (("jpeg files","*.jpg"), ("video files","*.mp4 *.avi"),("all files","*.*")))
-    
-    
+    filename = askopenfilename(parent=window,title = "Select input File",
+                               filetypes = (("jpeg files","*.jpg"),("video files","*.mp4 *.avi"),("all files","*.*")),
+                               initialdir=path.dirname(__file__))
+    entry1.config(state="normal")
+    entry1.delete(0, END)
+    entry1.insert(0, filename)
+    entry1.config(state="readonly")    
 
 window=Tk()        
 window.title("Auto Blur with Object Dection")
-window.geometry("350x400")
-window.resizable(False, False)
+window.geometry("190x250")
+window.resizable(True, True)
 window['bg']='lavender'
 
+label1=Label(window, text="input file", background="lavender")
 
-button1 = Button(window, text="file upload", relief='groove', foreground="LightPink4", command=fileupload)
-button1.pack() # Displaying the button
+button1 = Button(window, text=" file upload ", relief='groove', foreground="LightPink4", command=fileupload)
 button1["bg"]="peach puff"
 
-entry1 = Entry(window)
+entry1 = Entry(window,width=19)
 entry1.insert(0,"video address")
-entry1.pack()
+
+radioframe1=LabelFrame(window, text='type',background="lavender")
+radioframe2=LabelFrame(window, text='option',background="lavender")
 
 typeradio=IntVar()
-tradio1=Radiobutton(window, text="video", background="lavender", value=1, variable=typeradio)
-tradio1.pack()
-tradio2=Radiobutton(window, text="webcam", background="lavender", value=2, variable=typeradio)
-tradio2.pack()
-
+tradio1=Radiobutton(radioframe1, padx=18, text="video", background="lavender", value=1, variable=typeradio)
+tradio2=Radiobutton(radioframe1, padx=18, text="webcam", background="lavender", value=2, variable=typeradio)
 optionradio=IntVar()
-oradio1=Radiobutton(window, text="face detection", background="lavender", value=1, variable=optionradio)
-oradio1.pack()
-oradio2=Radiobutton(window, text="logo detection", background="lavender", value=2, variable=optionradio)
-oradio2.pack()
+oradio1=Radiobutton(radioframe2, text="face detection", background="lavender", value=1, variable=optionradio)
+oradio2=Radiobutton(radioframe2, text="logo detection", background="lavender", value=2, variable=optionradio)
 
-button2 = Button(window, text="Convert", relief='groove', foreground="LightPink4")
-button2.pack()
+button2 = Button(window, text=" Convert ", relief='groove', foreground="LightPink4")
 button2["bg"]="peach puff"
+
+label1.place(x=20,y=13)
+button1.place(x=75, y=10)
+entry1.place(x=20, y=40)
+radioframe1.place(x=20, y=60)
+radioframe2.place(x=20, y=130)
+button2.place(x=20, y=204)
+
+tradio1.grid(column=0, row=0)
+tradio2.grid(column=0, row=1)
+oradio1.grid(column=0, row=0)
+oradio2.grid(column=0, row=1)
+
 
 
 window.mainloop()

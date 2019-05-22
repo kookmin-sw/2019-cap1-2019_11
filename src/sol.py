@@ -92,10 +92,14 @@ def ffmpeg_resize(video,output,size):
 
 
 
-def videoupload(): #??솁??뵬 ??궎?逾? ?뤃?뗭겱?釉?
-    filename = askopenfilename(parent=root) 
-    f = open(filename) 
-    f.read()
+def videoupload(): 
+    filename = askopenfilename(parent=window,title = "Select input File",
+                               filetypes = (("jpeg files","*.jpg"),("video files","*.mp4 *.avi"),("all files","*.*")),
+                               initialdir=path.dirname(__file__))
+    entry1.config(state="normal")
+    entry1.delete(0, END)
+    entry1.insert(0, filename)
+    entry1.config(state="readonly")
 
 
 def process():
