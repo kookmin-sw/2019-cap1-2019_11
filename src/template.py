@@ -71,8 +71,8 @@ radioframe1.place(x=20, y=60)
 radioframe2.place(x=20, y=130)
 button2.place(x=20, y=204)
 
-tradio1.grid(column=0, row=0)
-tradio2.grid(column=0, row=1)
+tradio1.grid(column=0, row=0, sticky=W)
+tradio2.grid(column=0, row=1, sticky=W)
 oradio1.grid(column=0, row=0)
 oradio2.grid(column=0, row=1)
 
