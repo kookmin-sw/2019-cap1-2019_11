@@ -23,7 +23,7 @@ def msgbox():
 
 window=Tk()        
 window.title("Auto Blur with Object Dection")
-window.geometry("190x250")
+window.geometry("190x300")
 window.resizable(True, True)
 window['bg']='lavender'
 
@@ -55,8 +55,9 @@ radioframe1=LabelFrame(window, text='type',background="lavender")
 radioframe2=LabelFrame(window, text='option',background="lavender")
 
 typeradio=IntVar()
-tradio1=Radiobutton(radioframe1, padx=18, text="video", background="lavender", value=1, variable=typeradio)
-tradio2=Radiobutton(radioframe1, padx=18, text="webcam", background="lavender", value=2, variable=typeradio)
+tradio1=Radiobutton(radioframe1, padx=18, text="picture", background="lavender", value=1, variable=typeradio)
+tradio2=Radiobutton(radioframe1, padx=18, text="video", background="lavender", value=2, variable=typeradio)
+tradio3=Radiobutton(radioframe1, padx=18, text="webcam", background="lavender", value=2, variable=typeradio)
 optionradio=IntVar()
 oradio1=Radiobutton(radioframe2, text="face detection", background="lavender", value=1, variable=optionradio)
 oradio2=Radiobutton(radioframe2, text="logo detection", background="lavender", value=2, variable=optionradio)
@@ -67,12 +68,13 @@ button2["bg"]="peach puff"
 label1.place(x=20,y=13)
 button1.place(x=75, y=10)
 entry1.place(x=20, y=40)
-radioframe1.place(x=20, y=60)
-radioframe2.place(x=20, y=130)
-button2.place(x=20, y=204)
+radioframe1.place(x=20, y=63)
+radioframe2.place(x=20, y=161)
+button2.place(x=20, y=240)
 
 tradio1.grid(column=0, row=0, sticky=W)
 tradio2.grid(column=0, row=1, sticky=W)
+tradio3.grid(column=0, row=2, sticky=W)
 oradio1.grid(column=0, row=0)
 oradio2.grid(column=0, row=1)
 
