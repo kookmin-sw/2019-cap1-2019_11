@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter.filedialog import *
+from tkinter import messagebox as msg
 from os import path
 
 
@@ -17,6 +18,9 @@ def quit():
     window.destroy()
     exit()
 
+def msgbox():
+    msg.showinfo('Team Bblur Info', 'Team bblur')
+
 window=Tk()        
 window.title("Auto Blur with Object Dection")
 window.geometry("190x250")
@@ -33,7 +37,7 @@ filemenu.add_separator()
 filemenu.add_command(label="Exit", command=quit)
 
 helpmenu=Menu(menubar,tearoff=0)
-helpmenu.add_command(label="About")
+helpmenu.add_command(label="About", command=msgbox)
 
 menubar.add_cascade(label="File", menu=filemenu)
 menubar.add_cascade(label="Help", menu=helpmenu)
