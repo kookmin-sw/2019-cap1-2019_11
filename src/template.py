@@ -10,13 +10,34 @@ def fileupload():
     entry1.config(state="normal")
     entry1.delete(0, END)
     entry1.insert(0, filename)
-    entry1.config(state="readonly")    
+    entry1.config(state="readonly")
+
+def quit():
+    window.quit()
+    window.destroy()
+    exit()
 
 window=Tk()        
 window.title("Auto Blur with Object Dection")
 window.geometry("190x250")
 window.resizable(True, True)
 window['bg']='lavender'
+
+#############menu#######
+menubar=Menu(window)
+window.config(menu=menubar)
+
+filemenu=Menu(menubar,tearoff=0)
+filemenu.add_command(label="File Upload", command=fileupload)
+filemenu.add_separator()
+filemenu.add_command(label="Exit", command=quit)
+
+helpmenu=Menu(menubar,tearoff=0)
+helpmenu.add_command(label="About")
+
+menubar.add_cascade(label="File", menu=filemenu)
+menubar.add_cascade(label="Help", menu=helpmenu)
+############################
 
 label1=Label(window, text="input file", background="lavender")
 
