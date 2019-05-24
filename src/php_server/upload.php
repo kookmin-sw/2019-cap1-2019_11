@@ -1,18 +1,34 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <?php
+    if($_SERVER['REQUEST_METHOD']=='POST'){
+      $file_name = $_FILES['myFile']['name'];
+      $file_size = $_FILES['myFile']['size'];
+      $file_type = $_FILES['myFile']['type'];
+      $temp_name = $_FILES['myFile']['tmp_name'];
+      $location = "uploads/";
+      move_uploaded_file($temp_name,$location.$file_name);
+      echo "/uploads/".$file_name;
+    }else{
+      echo "Error";
+    }
 
-        if($_SERVER['REQUEST_METHOD']=='POST'){
-                $file_name = $_FILES['myFile']['name'];
-                $file_size = $_FILES['myFile']['size'];
-                $file_type = $_FILES['myFile']['type'];
-                $temp_name = $_FILES['myFile']['tmp_name'];
 
-                $location = "uploads/";
+    echo " check this : ";
+    print_r($_FILES);
 
-                move_uploaded_file($temp_name, $location.$file_name);
-                echo "/uploads/".$file_name;
-        }else{
-                echo "Error";
+    #echo " --------------test -------------------";
+    putenv("PYTHONIOENCODING=utf-8");
+
+    $name = $file_name;
+        if(substr($name,-4) == '.mp4')
+        {
+                $output = passthru('cd /home/ubuntu/yoloface/ && ls && python3 yoloface_gpu.py --video /var/www/html/uploads/'.$file_name.' 2>&1');
+                echo $output;
         }
-
-        echo " check this : ";
-        print_r($_FILES); ?>
+        else if(substr($name,-4) == '.jpg')
+        {
+                $output = passthru('cd /home/ubuntu/yoloface/ && ls && python3 yoloface_img.py --image /var/www/html/uploads/'.$file_name.' 2>&1');
+                echo $output;
+        }
+    #echo '~~~~finish ~~~~~';
+ ?>
