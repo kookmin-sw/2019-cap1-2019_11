@@ -1,14 +1,14 @@
 from tkinter import *
-
-import sys
-import os
+from tkinter import messagebox as msg
+from tkinter.filedialog import *
+from os import path
 
 import datetime
 import time
-import face_recognition
 import cv2
 import camera
 import numpy as np
+import face_recognition
 
 from utils import *
 import subprocess as sp
@@ -17,13 +17,7 @@ from moviepy.tools import subprocess_call
 from moviepy.config import get_setting
 
 
-#########################################
-
-
-
-#######################################################
-#ffmpeg
-
+###################################################
 
 def ffmpeg_movie_from_frames(filename, folder, fps, digits=6):
     """
@@ -87,12 +81,14 @@ def ffmpeg_resize(video,output,size):
     subprocess_call(cmd)
 
 
-######################################################
+
+###################################################
 
 
 
 
-def videoupload(): 
+
+def fileupload():
     filename = askopenfilename(parent=window,title = "Select input File",
                                filetypes = (("jpeg files","*.jpg"),("video files","*.mp4 *.avi"),("all files","*.*")),
                                initialdir=path.dirname(__file__))
@@ -101,15 +97,15 @@ def videoupload():
     entry1.insert(0, filename)
     entry1.config(state="readonly")
 
-
-def process():
-    if optionradio.get==1: #face detection
-        if typeradio.get==1: #video
+def convert():
+    if typeradio.get()==1:#picture
+        
+    elif typeradio.get()==2:#video
             net = cv2.dnn.readNetFromDarknet(args.model_cfg, args.model_weights)
             net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
             net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
             
-            cap = cv2.VideoCapture("input.mp4")
+            cap = cv2.VideoCapture(entry1.get())
 
             video_writer = cv2.VideoWriter('output.mp4', cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'),cap.get(cv2.CAP_PROP_FPS),
                                            (round(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),
@@ -122,7 +118,6 @@ def process():
                 has_frame, frame=cap.read()
                 if not has_frame:
                     print('[i] ==> Done processing!!!')
-                    print('[i] ==> Output file is stored at', os.path.join(args.output_dir, output_file))
                     cv2.waitKey(1000)
                     break
                 frame=face_recog.get_frame(frame)
@@ -136,9 +131,10 @@ def process():
 
             cap.release()
             cv2.destroyAllWindows()
-            ffmpeg_extract_audio('input.mp4', 'outAudio.mp3', bitrate=3000, fps=44100)
+            ffmpeg_extract_audio(entry1.get(), 'outAudio.mp3', bitrate=3000, fps=44100)
             ffmpeg_merge_video_audio('output.mp4', 'outAudio.mp3', 'output_final.mp4', vcodec='copy', acodec='copy', ffmpeg_output=False, verbose=True)
-        elif typeradio.get==2: #webcam
+
+    elif typeradio.get()==3:#webcam
             net = cv2.dnn.readNetFromDarknet(args.model_cfg, args.model_weights)
             net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
             net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
@@ -151,39 +147,76 @@ def process():
 
                 # if the `q` key was pressed, break from the loop
                 if key == ord("q"):
-                    break
-    
+                    break        
+        
+
+def quit():
+    window.quit()
+    window.destroy()
+    exit()
+
+def msgbox():
+    msg.showinfo('Team Bblur Info', 'Team bblur')
 
 window=Tk()        
 window.title("Auto Blur with Object Dection")
-window.geometry("350x400")
-window.resizable(False, False)
+window.geometry("190x250")
+window.resizable(True, True)
 window['bg']='lavender'
 
+#############menu#######
+menubar=Menu(window)
+window.config(menu=menubar)
 
-button1 = Button(window, text="file upload", relief='groove', foreground="LightPink4", command=videoupload)
-button1.pack() # Displaying the button
+filemenu=Menu(menubar,tearoff=0)
+filemenu.add_command(label="File Upload", command=fileupload)
+filemenu.add_separator()
+filemenu.add_command(label="Exit", command=quit)
+
+helpmenu=Menu(menubar,tearoff=0)
+helpmenu.add_command(label="About", command=msgbox)
+
+menubar.add_cascade(label="File", menu=filemenu)
+menubar.add_cascade(label="Help", menu=helpmenu)
+
+############################
+
+label1=Label(window, text="input file", background="lavender")
+
+button1 = Button(window, text=" file upload ", relief='groove', foreground="LightPink4", command=fileupload)
 button1["bg"]="peach puff"
 
-entry1 = Entry(window)
+entry1 = Entry(window,width=19)
 entry1.insert(0,"video address")
-entry1.pack()
+
+radioframe1=LabelFrame(window, text='type',background="lavender")
+radioframe2=LabelFrame(window, text='option',background="lavender")
 
 typeradio=IntVar()
-tradio1=Radiobutton(window, text="video", background="lavender", value=1, variable=typeradio)
-tradio1.pack()
-tradio2=Radiobutton(window, text="webcam", background="lavender", value=2, variable=typeradio)
-tradio2.pack()
-
+tradio1=Radiobutton(radioframe1, padx=18, text="picture", background="lavender", value=1, variable=typeradio)
+tradio2=Radiobutton(radioframe1, padx=18, text="video", background="lavender", value=2, variable=typeradio)
+tradio3=Radiobutton(radioframe1, padx=18, text="webcam", background="lavender", value=3, variable=typeradio)
 optionradio=IntVar()
-oradio1=Radiobutton(window, text="face detection", background="lavender", value=1, variable=optionradio)
-oradio1.pack()
-oradio2=Radiobutton(window, text="logo detection", background="lavender", value=2, variable=optionradio)
-oradio2.pack()
+oradio1=Radiobutton(radioframe2, text="face detection", background="lavender", value=1, variable=optionradio)
+oradio2=Radiobutton(radioframe2, text="logo detection", background="lavender", value=2, variable=optionradio)
 
-button2 = Button(window, text="Convert", relief='groove', foreground="LightPink4", command=process)
-button2.pack()
+button2 = Button(window, text=" Convert ", relief='groove', foreground="LightPink4")
 button2["bg"]="peach puff"
+
+label1.place(x=20,y=13)
+button1.place(x=75, y=10)
+entry1.place(x=20, y=40)
+radioframe1.place(x=20, y=63)
+radioframe2.place(x=20, y=161)
+button2.place(x=20, y=240)
+
+tradio1.grid(column=0, row=0, sticky=W)
+tradio2.grid(column=0, row=1, sticky=W)
+tradio3.grid(column=0, row=2, sticky=W)
+oradio1.grid(column=0, row=0)
+oradio2.grid(column=0, row=1)
+
 
 
 window.mainloop()
+
