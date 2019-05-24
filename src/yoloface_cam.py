@@ -4,10 +4,11 @@ import os
 
 import datetime
 import time
-import face_recognition
+
 import cv2
 import camera
 import numpy as np
+import face_recognition
 
 from utils import *
 
