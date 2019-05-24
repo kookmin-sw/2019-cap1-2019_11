@@ -3,14 +3,11 @@ from tkinter import messagebox as msg
 from tkinter.filedialog import *
 from os import path
 
+import face_recognition
+import os
 import datetime
 import time
-import cv2
-import camera
-import numpy as np
-import face_recognition
-
-from utils import *
+import sys
 import subprocess as sp
 
 from moviepy.tools import subprocess_call
@@ -18,6 +15,7 @@ from moviepy.config import get_setting
 
 
 ###################################################
+
 
 def ffmpeg_movie_from_frames(filename, folder, fps, digits=6):
     """
@@ -80,8 +78,7 @@ def ffmpeg_resize(video,output,size):
 
     subprocess_call(cmd)
 
-
-
+    
 ###################################################
 
 
@@ -99,47 +96,25 @@ def fileupload():
 
 def convert():
     if typeradio.get()==1:#picture
+        detect_img(YOLO(args))
         
     elif typeradio.get()==2:#video
-            net = cv2.dnn.readNetFromDarknet(args.model_cfg, args.model_weights)
-            net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
-            net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
-            
-            cap = cv2.VideoCapture(entry1.get())
+        detect_video(YOLO(args), entry1.get(), 'outputs/')
+                
+        ffmpeg_extract_audio(entry1.get(), 'outputs/outAudio.mp3', bitrate=3000, fps=44100)
 
-            video_writer = cv2.VideoWriter('output.mp4', cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'),cap.get(cv2.CAP_PROP_FPS),
-                                           (round(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),
-                                            round(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))))
-            #videowriter(outputfile,fourcc,frame,size)
-            #fourcc : codec information
+        audio='outputs/outAudio.mp3'
+        video='outputs/output_video.avi'
+        outputfinal='outputs/finalvideo.mp4'
+        # merges video file video and audio file audio into one movie file output.
 
-            face_recog=FaceRecog_video()
-            while True:
-                has_frame, frame=cap.read()
-                if not has_frame:
-                    print('[i] ==> Done processing!!!')
-                    cv2.waitKey(1000)
-                    break
-                frame=face_recog.get_frame(frame)
-            # Save the output video to file
-                video_writer.write(frame.astype(np.uint8))
-
-                key = cv2.waitKey(1)
-                if key == 27 or key == ord('q'):
-                    print('[i] ==> Interrupted by user!')
-                    break
-
-            cap.release()
-            cv2.destroyAllWindows()
-            ffmpeg_extract_audio(entry1.get(), 'outAudio.mp3', bitrate=3000, fps=44100)
-            ffmpeg_merge_video_audio('output.mp4', 'outAudio.mp3', 'output_final.mp4', vcodec='copy', acodec='copy', ffmpeg_output=False, verbose=True)
+        ffmpeg_merge_video_audio(video, audio, outputfinal, vcodec='copy', acodec='copy', ffmpeg_output=False, verbose=True)
 
     elif typeradio.get()==3:#webcam
-            net = cv2.dnn.readNetFromDarknet(args.model_cfg, args.model_weights)
-            net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
-            net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
-
-            face_recog=FaceRecog_Cam()
+        net = cv2.dnn.readNetFromDarknet('./cfg/yolov3-face.cfg', './model-weights/yolov3-wider_16000.weights')
+        net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
+        net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
+        face_recog=FaceRecog_Cam()
             while True:
                 frame=face_recog.get_frame()
                 cv2.imshow("Frame", frame)
