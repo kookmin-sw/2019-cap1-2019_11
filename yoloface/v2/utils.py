@@ -254,7 +254,7 @@ class FaceRecog_Cam():
         # Grab a single frame of video
         frame = self.camera.get_frame()
         #frame=self.vs.read()
-        
+
         # Create a 4D blob from a frame.
         blob = cv2.dnn.blobFromImage(frame, 1 / 255, (IMG_WIDTH, IMG_HEIGHT),
                                      [0, 0, 0], 1, crop=False)
@@ -286,6 +286,7 @@ class FaceRecog_Cam():
 #                print(distances)
                 if distances.all():
                     min_value = min(distances)
+                    print(min_value)
                     # tolerance: How much distance between faces to consider it a match. Lower is more strict.
                     # 0.6 is typical best performance.
                     name = "Unknown"
@@ -294,19 +295,19 @@ class FaceRecog_Cam():
                         name = self.known_face_names[index]
 
                     self.face_names.append(name)
-    
+
                 else:
                     name = "Unknown"
                     self.face_names.append(name)
 
-    
+
         for (top, right, bottom, left), name in zip(faces, self.face_names):
             # Scale back up face locations since the frame we detected in was scaled to 1/4 size
             top *= 4
             right *= 4
             bottom *= 4
             left *= 4
-                
+
             if name == 'Unknown':
                 # Extract the region of the image that contains the face
                 face_image = frame[top:bottom, left:right]
@@ -404,7 +405,7 @@ class FaceRecog_video():
 
                                      # Only process every other frame of video to save time
         if self.process_this_frame:
-            
+
 
             print(faces)
             self.face_encodings = face_recognition.face_encodings(rgb_small_frame, faces)
@@ -417,7 +418,7 @@ class FaceRecog_video():
                 min_value = min(distances)
 
                 name = "Unknown"
-                if min_value < 0.45:
+                if min_value < 0.4:
                     index = np.argmin(distances)
                     name = self.known_face_names[index]
                 print(name)
@@ -431,7 +432,7 @@ class FaceRecog_video():
             bottom *= 4
             left *= 4
 
-                                                                             
+
             cv2.rectangle(frame, (left, top), (right, bottom+10), (0, 0, 255), 2)
             font = cv2.FONT_HERSHEY_DUPLEX
             cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)

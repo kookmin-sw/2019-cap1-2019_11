@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
 import argparse
 
-#from yolo.yolo_md import YOLO, detect_video, letterbox_image
-from yolo.yoloTracing import YOLO, detect_video, letterbox_image
+# from yolo.yolo_md import YOLO, detect_video, letterbox_image
+from yolo.yoloTracingRe import YOLO, detect_video, letterbox_image
+# from yolo.yoloTracing import YOLO, detect_video, letterbox_image
 # from yolo.yolo_md_half import YOLO, detect_video, letterbox_image
 
 import face_recognition
@@ -9,7 +11,7 @@ import os
 import datetime
 import time
 import sys
-import subprocess as sp
+# import subprocess as sp
 
 from moviepy.tools import subprocess_call
 from moviepy.config import get_setting
@@ -89,7 +91,7 @@ def get_args():
                         help='path to anchor definitions')
     parser.add_argument('--classes', type=str, default='cfg/face_classes.txt',
                         help='path to class definitions')
-    parser.add_argument('--score', type=float, default=0.5,
+    parser.add_argument('--score', type=float, default=0.7,
                         help='the score threshold')
     parser.add_argument('--iou', type=float, default=0.45,
                         help='the iou threshold')
