@@ -1,6 +1,6 @@
 import sys
 import argparse
-from yolo import YOLO, detect_video
+from yolo import YOLO, blur_video, blur_webcam
 from PIL import Image
 
 def detect_img(yolo):
@@ -76,6 +76,8 @@ if __name__ == '__main__':
             print(" Ignoring remaining command line arguments: " + FLAGS.input + "," + FLAGS.output)
         detect_img(YOLO(**vars(FLAGS)))
     elif "input" in FLAGS:
-        detect_video(YOLO(**vars(FLAGS)), FLAGS.input, FLAGS.output)
+        blur_video(YOLO(**vars(FLAGS)), FLAGS.input, FLAGS.output)
+    elif "webcam" in FLAGS:
+        blur_webcam(YOLO(**vars(FLAGS)))
     else:
         print("Must specify at least video_input_path.  See usage with --help.")

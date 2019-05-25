@@ -193,18 +193,8 @@ class YOLO(object):
                 K.learning_phase(): 0
             })
 
-        print('Found {} boxes for {}'.format(len(out_boxes), 'img'))
-
-        font = ImageFont.truetype(font='font/FiraMono-Medium.otf',
-                    size=np.floor(3e-2 * image.size[1] + 0.5).astype('int32'))
-        thickness = (image.size[0] + image.size[1]) // 300
-
         for i, c in reversed(list(enumerate(out_classes))):
-            predicted_class = self.class_names[c]
             box = out_boxes[i]
-            score = out_scores[i]
-
-            label = '{} {:.2f}'.format(predicted_class, score)
    
             top, left, bottom, right = box
             top = max(0, np.floor(top + 0.5).astype('int32'))
@@ -220,8 +210,30 @@ class YOLO(object):
             input[top:bottom, left:right] = frame
             
         image = Image.fromarray(input)
-        end = timer()
-        print(end - start)
+        return image, out_boxes
+
+
+    def blur_image2(self, input, boxes):
+        import cv2
+        image = Image.fromarray(input)
+
+        for i, c in reversed(list(enumerate(boxes))):
+            box = boxes[i]
+   
+            top, left, bottom, right = box
+            top = max(0, np.floor(top + 0.5).astype('int32'))
+            left = max(0, np.floor(left + 0.5).astype('int32'))
+            bottom = min(image.size[1], np.floor(bottom + 0.5).astype('int32'))
+            right = min(image.size[0], np.floor(right + 0.5).astype('int32'))
+            
+            # Extract the region of the image that contains the face
+            frame = input[top:bottom, left:right]
+            # Blur the face image
+            frame = cv2.GaussianBlur(frame, (99, 99), 30)
+            # Put the blurred logo region back into the frame image
+            input[top:bottom, left:right] = frame
+            
+        image = Image.fromarray(input)
         return image
 
 
@@ -232,7 +244,7 @@ class YOLO(object):
 
 
 
-def detect_video(yolo, video_path, output_path=""):
+def blur_video(yolo, video_path, output_path=""):
     import cv2
     vid = cv2.VideoCapture(video_path)
     if not vid.isOpened():
@@ -245,38 +257,26 @@ def detect_video(yolo, video_path, output_path=""):
     if isOutput:
         print("!!! TYPE:", type(output_path), type(video_FourCC), type(video_fps), type(video_size))
         out = cv2.VideoWriter(output_path, video_FourCC, video_fps, video_size)
-    accum_time = 0
-    curr_fps = 0
-    fps = "FPS: ??"
-    prev_time = timer()
+ 
     while True:
         return_value, frame = vid.read()
 
 #       image = Image.fromarray(frame)
 #       image = yolo.detect_image(image)
-        image = yolo.blur_image(frame)
+        image, boxes = yolo.blur_image(frame)
         result = np.asarray(image)
 
-        curr_time = timer()
-        exec_time = curr_time - prev_time
-        prev_time = curr_time
-        accum_time = accum_time + exec_time
-        curr_fps = curr_fps + 1
-        if accum_time > 1:
-            accum_time = accum_time - 1
-            fps = "FPS: " + str(curr_fps)
-            curr_fps = 0
-        cv2.putText(result, text=fps, org=(3, 15), fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                    fontScale=0.50, color=(255, 0, 0), thickness=2)
         cv2.namedWindow("result", cv2.WINDOW_NORMAL)
         cv2.imshow("result", result)
         if isOutput:
             out.write(result)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
+
     yolo.close_session()
 
-def detect_webcam(yolo):
+
+def blur_webcam(yolo):
     import cv2
     vid = cv2.VideoCapture(0)
     if not vid.isOpened():
@@ -286,24 +286,31 @@ def detect_webcam(yolo):
     video_size      = (int(vid.get(cv2.CAP_PROP_FRAME_WIDTH)),
                         int(vid.get(cv2.CAP_PROP_FRAME_HEIGHT)))
 
-    accum_time = 0
-    curr_fps = 0
-    fps = "FPS: ??"
-    prev_time = timer()
     while True:
         return_value, frame = vid.read()
-        image = Image.fromarray(frame)
-        image = yolo.detect_image(image) 
+        image, boxes = yolo.blur_image(frame)
         result = np.asarray(image)
-        curr_time = timer()
-        exec_time = curr_time - prev_time
-        prev_time = curr_time
-        accum_time = accum_time + exec_time
-        curr_fps = curr_fps + 1
-       
-        cv2.namedWindow("result", cv2.WINDOW_NORMAL)
+        cv2.namedWindow("Webcam", cv2.WINDOW_NORMAL)
         cv2.imshow("result", result)
-
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
+        
+        return_value, frame = vid.read()
+        image = yolo.blur_image2(frame)
+        result = np.asarray(image)
+        cv2.namedWindow("Webcam", cv2.WINDOW_NORMAL)
+        cv2.imshow("result", result)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+        return_value, frame = vid.read()
+        image = yolo.blur_image2(frame)
+        result = np.asarray(image)
+        cv2.namedWindow("Webcam", cv2.WINDOW_NORMAL)
+        cv2.imshow("result", result)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+        
+
+
     yolo.close_session()

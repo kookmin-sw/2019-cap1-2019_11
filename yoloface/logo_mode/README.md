@@ -1,21 +1,24 @@
-# Logo_mode
+# Brand Logo Blurring System
 
-The original code address : https://github.com/qqwweee/keras-yolo3
+This system could detect 16 brand logos.
 
-## Introduction
-
-
-
+Adidas  Apple  BMW  Cocacola  Ferrari  Google
+Heineken  McDonalds  Mini  Nike  Pepsi  Porsche
+Puma  RedBull  Sprite  Starbucks
 
 ---
+## Quick start
 
+Webcam mode :  python blur_logo.py --webcam         
+Input video mode : python blur_logo.py --input <filepath> --output <filepath>        
 
+---
 ### Usage
 Use --help to see usage of yolo_video.py:
 ```
-usage: yolo_video.py [-h] [--model MODEL] [--anchors ANCHORS]
+usage: blur_logo.py [-h] [--model MODEL] [--anchors ANCHORS]
                      [--classes CLASSES] [--gpu_num GPU_NUM] [--image]
-                     [--input] [--output]
+                     [--input] [--output][--webcam]
 
 positional arguments:
   --input        Video input path
@@ -36,3 +39,5 @@ optional arguments:
 4. MultiGPU usage: use `--gpu_num N` to use N GPUs. It is passed to the [Keras multi_gpu_model()](https://keras.io/utils/#multi_gpu_model).
 
 ---
+
+The original code address : https://github.com/qqwweee/keras-yolo3
