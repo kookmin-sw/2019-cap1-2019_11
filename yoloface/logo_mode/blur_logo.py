@@ -75,9 +75,9 @@ if __name__ == '__main__':
         if "input" in FLAGS:
             print(" Ignoring remaining command line arguments: " + FLAGS.input + "," + FLAGS.output)
         detect_img(YOLO(**vars(FLAGS)))
-    elif "input" in FLAGS:
-        blur_video(YOLO(**vars(FLAGS)), FLAGS.input, FLAGS.output)
     elif "webcam" in FLAGS:
         blur_webcam(YOLO(**vars(FLAGS)))
+    elif "input" in FLAGS:
+        blur_video(YOLO(**vars(FLAGS)), FLAGS.input, FLAGS.output)
     else:
         print("Must specify at least video_input_path.  See usage with --help.")

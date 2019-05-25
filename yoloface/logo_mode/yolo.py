@@ -296,7 +296,7 @@ def blur_webcam(yolo):
             break
         
         return_value, frame = vid.read()
-        image = yolo.blur_image2(frame)
+        image = yolo.blur_image2(frame, boxes)
         result = np.asarray(image)
         cv2.namedWindow("Webcam", cv2.WINDOW_NORMAL)
         cv2.imshow("result", result)
@@ -304,7 +304,7 @@ def blur_webcam(yolo):
             break
 
         return_value, frame = vid.read()
-        image = yolo.blur_image2(frame)
+        image = yolo.blur_image2(frame, boxes)
         result = np.asarray(image)
         cv2.namedWindow("Webcam", cv2.WINDOW_NORMAL)
         cv2.imshow("result", result)
