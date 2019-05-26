@@ -10,7 +10,7 @@ Puma  RedBull  Sprite  Starbucks
 ## Quick start
 
 Webcam mode :  python blur_logo.py --webcam         
-Input video mode : python blur_logo.py --input <filepath> --output <filepath>        
+Input video or image mode : python blur_logo.py --input "File path" --output "File path"        
 
 ---
 ### Usage
@@ -32,7 +32,6 @@ optional arguments:
   --classes CLASSES  path to class definitions, default
                      model_data/coco_classes.txt
   --gpu_num GPU_NUM  Number of GPU to use, default 1
-  --image            Image detection mode, will ignore all positional arguments
 ```
 ---
 
