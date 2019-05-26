@@ -296,6 +296,7 @@ def detect_video(model, video_path=None, output=None):
                         isStart=False
                         check=False
                         t_cnt=0
+                        boxes=[]
                         trackers = cv2.MultiTracker_create()
 
                 if model.process_this_frame:
@@ -305,6 +306,7 @@ def detect_video(model, video_path=None, output=None):
                     model.face_dist=[]
 
                     for face_encoding in model.face_encodings :
+
                         distances = face_recognition.face_distance(model.known_face_encodings, face_encoding)
 
                         if not len(distances)==0:
@@ -313,7 +315,7 @@ def detect_video(model, video_path=None, output=None):
                             # tolerance: How much distance between faces to consider it a match. Lower is more strict.
                             # 0.6 is typical best performance.
                             name = "Unknown"
-                            if min_value < 0.38:
+                            if min_value < 0.4:
                                 index = np.argmin(distances)
                                 name = model.known_face_names[index]
 
@@ -325,12 +327,12 @@ def detect_video(model, video_path=None, output=None):
                         else:
                             name = "Unknown"
                             model.face_names.append(name)
-                            model.face_dist.append(min_value)
+                            # model.face_dist.append(min_value)
                             print('name = ', name)
-                            print('min_v : ',min_value)
+                            # print('min_v : ',min_value)
 
 
-                for (top,right,bottom,left), name , dist in zip(final_boxes, model.face_names, model.face_dist):
+                for (top,right,bottom,left), name  in zip(final_boxes, model.face_names):
 
                     top *= 4
                     right *= 4
@@ -412,21 +414,8 @@ def detect_video(model, video_path=None, output=None):
                                     boxes.append([left,top,width,height])
                             # 겹치는 면적 구해서 겹치는게 없으면 ㄲ
 
-                    ### resize 사용하여 모자이크
-                    # if name == 'Unknown':
-                    #     face_img = frame[top:bottom, left:right]
-                    #     a=(right-left)//30
-                    #     b=(bottom-top)//30
-                    #     if a <= 0 :
-                    #         a=1
-                    #     if b <= 0 :
-                    #         b=1
-                    #     face_img = cv2.resize(face_img, (a, b))
-                    #     face_img = cv2.resize(face_img, (right-left, bottom-top), interpolation=cv2.INTER_AREA)
-                    #
-                    #     frame[top:bottom, left:right]=face_img
 
-                    dist_st=str(dist)
+                    # dist_st=str(dist)
 
                     # cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
                     font = cv2.FONT_HERSHEY_DUPLEX
