@@ -17,7 +17,7 @@ Input video or image mode : python blur_logo.py --input "File path" --output "Fi
 Use --help to see usage of yolo_video.py:
 ```
 usage: blur_logo.py [-h] [--model MODEL] [--anchors ANCHORS]
-                     [--classes CLASSES] [--gpu_num GPU_NUM] [--image]
+                     [--classes CLASSES] [--gpu_num GPU_NUM]
                      [--input] [--output][--webcam]
 
 positional arguments:
