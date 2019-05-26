@@ -1,8 +1,11 @@
 package com.example.bokyeong.bblur;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,7 +15,10 @@ import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.io.InputStream;
 
 public class PhotoUploadActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -20,6 +26,7 @@ public class PhotoUploadActivity extends AppCompatActivity implements View.OnCli
     private Button buttonUploadPhoto; // 업로드 버튼
     private TextView textView;
     private TextView textViewResponse;
+    private ImageView photo_preview_main; //사진 미리보기
 
     private static final int SELECT_PHOTO = 3;
 
@@ -35,6 +42,7 @@ public class PhotoUploadActivity extends AppCompatActivity implements View.OnCli
 
         textView = (TextView) findViewById(R.id.textView);
         textViewResponse = (TextView) findViewById(R.id.textViewResponse);
+        photo_preview_main = (ImageView) findViewById(R.id.photo_preview_main);
 
         buttonChoosePhoto.setOnClickListener(this);
         buttonUploadPhoto.setOnClickListener(this);
@@ -54,7 +62,19 @@ public class PhotoUploadActivity extends AppCompatActivity implements View.OnCli
                 System.out.println("SELECT_PHOTO");
                 Uri selectedImageUri = data.getData();
                 selectedPath = getPath(selectedImageUri);
-                textView.setText(selectedPath);
+                textView.setText("사진이 선택되었습니다.");
+                try {
+                    //선택한 이미지에서 비트맵 생성
+                    InputStream inputStream = getContentResolver().openInputStream(data.getData());
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    inputStream.close();
+
+                    //이미지 표시
+                    photo_preview_main.setImageBitmap(bitmap);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -77,33 +97,45 @@ public class PhotoUploadActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void uploadPhoto() {
-        class UploadVideo extends AsyncTask<Void, Void, String> {
+        //선택된 사진이 없을 때 알림 창
+        if (selectedPath == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("선택된 사진이 없습니다")
+                    .setMessage("사진을 먼저 선택하세요")
+                    .setNegativeButton("확 인", null).setCancelable(false);
 
-            ProgressDialog uploading;
+            AlertDialog alert = builder.create();
+            alert.show();
 
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                uploading = ProgressDialog.show(PhotoUploadActivity.this, "Uploading File", "Please wait...", false, false);
+        } else {
+            class UploadVideo extends AsyncTask<Void, Void, String> {
+
+                ProgressDialog uploading;
+
+                @Override
+                protected void onPreExecute() {
+                    super.onPreExecute();
+                    uploading = ProgressDialog.show(PhotoUploadActivity.this, "Uploading File", "Please wait...", false, false);
+                }
+
+                @Override
+                protected void onPostExecute(String s) {
+                    super.onPostExecute(s);
+                    uploading.dismiss();
+                    textViewResponse.setText(Html.fromHtml("<b>Uploaded at <a href='" + s + "'>" + s + "</a></b>"));
+                    textViewResponse.setMovementMethod(LinkMovementMethod.getInstance());
+                }
+
+                @Override
+                protected String doInBackground(Void... params) {
+                    Upload u = new Upload();
+                    String msg = u.upLoad2Server(selectedPath);
+                    return msg;
+                }
             }
-
-            @Override
-            protected void onPostExecute(String s) {
-                super.onPostExecute(s);
-                uploading.dismiss();
-                textViewResponse.setText(Html.fromHtml("<b>Uploaded at <a href='" + s + "'>" + s + "</a></b>"));
-                textViewResponse.setMovementMethod(LinkMovementMethod.getInstance());
-            }
-
-            @Override
-            protected String doInBackground(Void... params) {
-                Upload u = new Upload();
-                String msg = u.upLoad2Server(selectedPath);
-                return msg;
-            }
+            UploadVideo uv = new UploadVideo();
+            uv.execute();
         }
-        UploadVideo uv = new UploadVideo();
-        uv.execute();
     }
 
 

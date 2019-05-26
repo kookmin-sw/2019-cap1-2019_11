@@ -1,32 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:background="#80ccff"
-    android:orientation="vertical">
+<RelativeLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".MainActivity"
+android:background="#ffffff"
+android:orientation="vertical">
 
-    <Button
-        android:id="@+id/buttonMyUpload"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="편집할 동영상 업로드" />
+<Button
+    android:id="@+id/buttonGoCamera"
+    android:layout_width="200dp"
+    android:layout_height="60dp"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="100dp"
+    android:layout_marginBottom="15dp"
+    android:background="#b3ffff"
+    android:text="카메라 실행" />
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="편집할 사진 업로드"
-        android:id="@+id/buttonPhotoUpload"/>
+    <!-- android:layout_marginTop="150dp" --> //위에 공백
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="블러처리 제거 대상"
-        android:id="@+id/buttonFaceUpload"/>
+<Button
+    android:id="@+id/buttonGoVideo"
+    android:layout_width="200dp"
+    android:layout_height="60dp"
+    android:layout_centerHorizontal="true"
+    android:layout_below="@+id/buttonGoCamera"
+    android:layout_marginBottom="15dp"
+    android:background="#b3ffff"
+    android:text="동영상 실행" />
+
+<Button
+    android:id="@+id/buttonMyUpload"
+    android:layout_width="200dp"
+    android:layout_height="60dp"
+    android:layout_centerHorizontal="true"
+    android:layout_below="@+id/buttonGoVideo"
+    android:layout_marginBottom="15dp"
+    android:background="#b3ffff"
+    android:text="편집할 동영상 업로드" />
+
+<Button
+    android:id="@+id/buttonPhotoUpload"
+    android:layout_width="200dp"
+    android:layout_height="60dp"
+    android:layout_centerHorizontal="true"
+    android:layout_below="@+id/buttonMyUpload"
+    android:layout_marginBottom="40dp"
+    android:background="#b3ffff"
+    android:text="편집할 사진 업로드" />
+
+<Button
+    android:id="@+id/buttonFaceUpload"
+    android:layout_width="200dp"
+    android:layout_height="60dp"
+    android:layout_centerHorizontal="true"
+    android:layout_below="@+id/buttonPhotoUpload"
+    android:background="#00e6e6"
+    android:text="블러처리 제거 대상" />
 
 
 
 
-</LinearLayout>
+</RelativeLayout>

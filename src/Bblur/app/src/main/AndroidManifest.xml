@@ -2,9 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.bokyeong.bblur">
 
+    <uses-permission android:name="android.permission.CAMERA" /> //카메라
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/> //동영상 녹화
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" /> //영상 재생 중 화면 조정
+
+    <uses-feature android:name="android.hardware.camera"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -21,9 +27,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MyUploadActivity" />
-        <activity android:name=".PhotoUploadActivity" />
-        <activity android:name=".FaceUploadActivity"></activity>
+        <activity android:name=".MyUploadActivity"/>
+        <activity android:name=".PhotoUploadActivity"/>
+        <activity android:name=".FaceUploadActivity"/>
+        <activity android:name=".VideoUploadActivity"/>
+        <activity android:name=".CameraUploadActivity">
+        </activity>
+
+        <provider
+            android:authorities="com.example.bokyeong.bblur"
+            android:name="android.support.v4.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_path"/>
+        </provider>
     </application>
 
 </manifest>
