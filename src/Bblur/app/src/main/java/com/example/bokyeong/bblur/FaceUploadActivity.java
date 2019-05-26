@@ -28,7 +28,7 @@ public class FaceUploadActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_face_upload);
+        setContentView(R.layout.activity_photo_upload);
 
         buttonChoosePhoto = (Button) findViewById(R.id.buttonChoosePhoto);
         buttonUploadPhoto = (Button) findViewById(R.id.buttonUploadPhoto);
