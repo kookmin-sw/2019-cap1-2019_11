@@ -15,7 +15,7 @@ import java.net.URL;
 public class UploadNoEdit {
 
     private int serverResponseCode;
-    public static final String UPLOAD_URL = "http://13.124.34.128/uploadNoEdit.php";
+    public static final String UPLOAD_URL = "http://52.79.176.116/uploadNoEdit.php";
 
     public String upLoad2Server(String sourceFileUri) {
 
