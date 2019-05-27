@@ -15,7 +15,7 @@ import java.net.URL;
 public class Upload {
 
     private int serverResponseCode;
-    public static final String UPLOAD_URL = "http://13.124.34.128/upload.php";
+    public static final String UPLOAD_URL = "http://52.79.176.116/upload.php";
 
     public String upLoad2Server(String sourceFileUri) {
 
