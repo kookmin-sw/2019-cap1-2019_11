@@ -10,9 +10,9 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
 
     Button buttonGoCamera; //카메라 액티비티로 이동 버튼
     Button buttonGoVideo; //비디오 액티비티로 이동 버튼
-    Button buttonMyUpload;
-    Button buttonPhotoUpload;
-    Button buttonFaceUpload;
+    Button buttonMyUpload; //동영상 업로드 버튼
+    Button buttonPhotoUpload; //사진 업로드 버튼
+    Button buttonFaceUpload; //제외 대상 업로드 버
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +31,6 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
         buttonPhotoUpload.setOnClickListener(this);
         buttonFaceUpload.setOnClickListener(this);
     }
-
 
     private void myUpload() {
         Intent intent = new Intent(getApplicationContext(), MyUploadActivity.class);
