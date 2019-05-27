@@ -12,12 +12,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.InputStream;
 
@@ -32,7 +31,6 @@ public class FaceUploadActivity extends AppCompatActivity implements View.OnClic
     private static final int SELECT_PHOTO = 3;
 
     private  String selectedPath;
-    private Dialog loadingDlg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,21 +48,10 @@ public class FaceUploadActivity extends AppCompatActivity implements View.OnClic
         buttonUploadPhoto.setOnClickListener(this);
     }
 
-    /*
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (loadingDlg != null) {
-            loadingDlg.dismiss();
-            loadingDlg = null;
-        }
-    }
-    */
-
     private void chooseVideo() {
         Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.setAction(Intent.ACTION_PICK);
+        intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
         startActivityForResult(Intent.createChooser(intent, "Select a Photo "), SELECT_PHOTO);
     }
 
@@ -127,7 +114,6 @@ public class FaceUploadActivity extends AppCompatActivity implements View.OnClic
 
                 ProgressDialog uploading;
 
-
                 @Override
                 protected void onPreExecute() {
                     super.onPreExecute();
@@ -138,8 +124,8 @@ public class FaceUploadActivity extends AppCompatActivity implements View.OnClic
                 protected void onPostExecute(String s) {
                     super.onPostExecute(s);
                     uploading.dismiss();
-                    textViewResponse.setText(Html.fromHtml("<b>Uploaded at <a href='" + s + "'>" + s + "</a></b>"));
-                    textViewResponse.setMovementMethod(LinkMovementMethod.getInstance());
+                    Toast toast = Toast.makeText(getApplicationContext(), "처리 제외 대상이 저장되었습니다.", Toast.LENGTH_LONG); toast.show();
+
                 }
 
                 @Override
