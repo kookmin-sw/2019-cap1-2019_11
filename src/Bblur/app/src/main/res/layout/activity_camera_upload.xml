@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#e8f0f8"
     android:padding="16dp">
 
     <ImageView
@@ -21,8 +22,10 @@
         android:layout_alignParentBottom="true"
         android:layout_marginRight="20dp"
         android:layout_marginBottom="100dp"
-        android:background="#80ccff"
-        android:text="사진 업로드" />
+        android:background="#dbebf0"
+        android:text="사진 업로드"
+        android:fontFamily="@font/tvnbold"
+        android:textSize="30dp"/>
 
     <Button
         android:id="@+id/buttonCamera"
@@ -33,8 +36,10 @@
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="20dp"
         android:layout_marginBottom="100dp"
-        android:background="#80ccff"
-        android:text="사진 찍기"/>
+        android:background="#dbebf0"
+        android:text="사진 찍기"
+        android:fontFamily="@font/tvnbold"
+        android:textSize="30dp"/>
 
     <TextView
         android:id="@+id/textView_camera"
@@ -49,6 +54,19 @@
         android:layout_marginBottom="50dp"
         android:id="@+id/textViewResponse_camera"/>
 
-
+    <Button
+        android:id="@+id/buttonDownloadVideo"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="15dp"
+        android:background="#dbebf0"
+        android:fontFamily="@font/tvnbold"
+        android:textSize="30dp"
+        android:text="✔다운로드" />
 
 </RelativeLayout>
