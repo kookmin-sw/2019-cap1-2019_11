@@ -33,10 +33,10 @@ COLOR_YELLOW = (0, 255, 255)
 
 ###########
 parser = argparse.ArgumentParser()
-parser.add_argument('--model-cfg', type=str, default='./cfg/yolov3-face.cfg',
+parser.add_argument('--model-cfg', type=str, default='./cfg/face.cfg',
                     help='path to config file')
 parser.add_argument('--model-weights', type=str,
-                    default='./model-weights/yolov3-wider_16000.weights',
+                    default='./model-weights/face16000.weights',
                     help='path to weights of model')
 parser.add_argument('--image', type=str, default='',
                     help='path to image file')
@@ -286,6 +286,7 @@ class FaceRecog_Cam():
 #                print(distances)
                 if distances.all():
                     min_value = min(distances)
+                    print(min_value)
                     # tolerance: How much distance between faces to consider it a match. Lower is more strict.
                     # 0.6 is typical best performance.
                     name = "Unknown"
@@ -417,7 +418,7 @@ class FaceRecog_video():
                 min_value = min(distances)
 
                 name = "Unknown"
-                if min_value < 0.45:
+                if min_value < 0.4:
                     index = np.argmin(distances)
                     name = self.known_face_names[index]
                 print(name)

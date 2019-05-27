@@ -97,7 +97,7 @@ def get_args():
                         default=(416, 416), help='input image size')
     parser.add_argument('--image', default=False, action="store_true",
                         help='image detection mode')
-    parser.add_argument('--video', type=str, default='samples/subway.mp4',
+    parser.add_argument('--video', type=str, default='samples/tiphone.mp4',
                         help='path to the video')
     parser.add_argument('--output', type=str, default='outputs/',
                         help='image/video output path')
