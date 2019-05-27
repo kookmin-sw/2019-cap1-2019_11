@@ -5,6 +5,7 @@
     tools:context=".MyUploadActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#e8f0f8"
     android:padding="16dp">
 
 
@@ -22,9 +23,11 @@
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="20dp"
         android:layout_marginBottom="100dp"
-        android:background="#80ccff"
+        android:background="#dbebf0"
         android:text="사진 선택"
-        android:id="@+id/buttonChoosePhoto" />
+        android:id="@+id/buttonChoosePhoto"
+        android:fontFamily="@font/tvnbold"
+        android:textSize="30dp"/>
 
     <Button
         android:id="@+id/buttonUploadPhoto"
@@ -35,8 +38,10 @@
         android:layout_alignParentBottom="true"
         android:layout_marginRight="20dp"
         android:layout_marginBottom="100dp"
-        android:background="#80ccff"
-        android:text="사진 업로드" />
+        android:background="#dbebf0"
+        android:text="사진 업로드"
+        android:fontFamily="@font/tvnbold"
+        android:textSize="30dp"/>
 
     <TextView
         android:id="@+id/textView"
