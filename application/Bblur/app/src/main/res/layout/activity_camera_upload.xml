@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#e8f0f8"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/camera_preview_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="200dp" />
+
+    <Button
+        android:id="@+id/buttonUploadPhoto"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="100dp"
+        android:background="#dbebf0"
+        android:text="사진 업로드"
+        android:fontFamily="@font/tvnbold"
+        android:textSize="30dp"/>
+
+    <Button
+        android:id="@+id/buttonCamera"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="100dp"
+        android:background="#dbebf0"
+        android:text="사진 찍기"
+        android:fontFamily="@font/tvnbold"
+        android:textSize="30dp"/>
+
+    <TextView
+        android:id="@+id/textView_camera"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="50dp"
+        android:id="@+id/textViewResponse_camera"/>
+
+    <Button
+        android:id="@+id/buttonDownloadCamera"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="15dp"
+        android:background="#dbebf0"
+        android:fontFamily="@font/tvnbold"
+        android:textSize="30dp"
+        android:text="✔다운로드" />
+
+</RelativeLayout>
