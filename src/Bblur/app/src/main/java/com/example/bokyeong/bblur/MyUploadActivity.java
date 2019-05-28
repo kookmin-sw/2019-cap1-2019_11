@@ -1,31 +1,25 @@
 package com.example.bokyeong.bblur;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.MediaController;
 import android.widget.Toast;
 import android.widget.VideoView;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
@@ -36,19 +30,14 @@ public class MyUploadActivity extends AppCompatActivity implements View.OnClickL
     private Button buttonChoose; // 비디오 선택 버튼
     private Button buttonUpload; // 업로드 버튼
     private Button buttonDownload; // 다운로드 버튼
-    private TextView textView;
-    private TextView textViewResponse;
     private VideoView video_preview_main2;
 
     private static final int SELECT_VIDEO = 3;
 
     private  String selectedPath;
 
-    private ProgressDialog progressBar;
-    private File outputFile;
-    private File filePath;
-
-
+    private ProgressDialog pDialog;
+    public static final int progress_bar_type = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,20 +48,11 @@ public class MyUploadActivity extends AppCompatActivity implements View.OnClickL
         buttonUpload = (Button) findViewById(R.id.buttonUpload);
         buttonDownload = (Button) findViewById(R.id.buttonDownload);
 
-        textView = (TextView) findViewById(R.id.textView);
-        textViewResponse = (TextView) findViewById(R.id.textViewResponse);
-//        video_preview_main2 = (VideoView) findViewById(R.id.video_preview_main2);
+        video_preview_main2 = (VideoView) findViewById(R.id.video_preview_main2);
 
         buttonChoose.setOnClickListener(this);
         buttonUpload.setOnClickListener(this);
         buttonDownload.setOnClickListener(this);
-
-        progressBar=new ProgressDialog(MyUploadActivity.this);
-        progressBar.setMessage("다운로드 중");
-        progressBar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressBar.setIndeterminate(true);
-        progressBar.setCancelable(true);
-
     }
 
     private void chooseVideo() {
@@ -89,14 +69,15 @@ public class MyUploadActivity extends AppCompatActivity implements View.OnClickL
                 System.out.println("SELECT_VIDEO");
                 Uri selectedImageUri = data.getData();
                 selectedPath = getPath(selectedImageUri);
-                Toast toast = Toast.makeText(getApplicationContext(), "동영상이 선택되었습니다. 업로드를 진행하세요.", Toast.LENGTH_LONG); toast.show();
+                Toast toast = Toast.makeText(getApplicationContext(), "동영상이 선택되었습니다.", Toast.LENGTH_SHORT); toast.show();
 
             }
+
             // VideoView : 동영상을 재생하는 뷰
-            //VideoView vv = (VideoView) findViewById(R.id.video_preview_main2);
+            VideoView vv = (VideoView) findViewById(R.id.video_preview_main2);
 
             // MediaController : 특정 View 위에서 작동하는 미디어 컨트롤러 객체
-            /*MediaController mc = new MediaController(this);
+            MediaController mc = new MediaController(this);
             video_preview_main2.setMediaController(mc); // Video View 에 사용할 컨트롤러 지정
 
             String path = Environment.getExternalStorageDirectory()
@@ -111,7 +92,7 @@ public class MyUploadActivity extends AppCompatActivity implements View.OnClickL
             // VideoView 로 재생할 영상
             // 아까 동영상 [상세정보] 에서 확인한 경로
             video_preview_main2.requestFocus(); // 포커스 얻어오기
-            video_preview_main2.start(); // 동영상 재생*/
+            video_preview_main2.start(); // 동영상 재생
         }
     }
 
@@ -158,8 +139,7 @@ public class MyUploadActivity extends AppCompatActivity implements View.OnClickL
                 protected void onPostExecute(String s) {
                     super.onPostExecute(s);
                     uploading.dismiss();
-                    textViewResponse.setText(Html.fromHtml("<b>Uploaded at <a href='" + s + "'>" + s + "</a></b>"));
-                    textViewResponse.setMovementMethod(LinkMovementMethod.getInstance());
+                    Toast toast = Toast.makeText(getApplicationContext(), "편집이 완료되었습니다.", Toast.LENGTH_SHORT); toast.show();
                 }
 
                 @Override
@@ -174,157 +154,93 @@ public class MyUploadActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-
     private void downloadVideo() {
-        final String fileURL = "http://52.79.176.116/outputs/finalvideo.mp4";
 
-        filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        outputFile = new File(filePath, "s.mp4");
-
-        if (outputFile.exists()) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(MyUploadActivity.this);
-            builder.setTitle("다운로드");
-            builder.show();
-        } else {
-            final DownloadFilesTask downloadTask = new DownloadFilesTask(MyUploadActivity.this);
-            downloadTask.execute(fileURL);
-
-            progressBar.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    downloadTask.cancel(true);
-                }
-            });
-        }
+        new DownloadFileFromURL().execute("http://52.79.176.116/outputs/finalvideo.mp4");
 
     }
 
-    private class DownloadFilesTask extends AsyncTask<String, String, Long> {
-        private Context context;
-        private PowerManager.WakeLock mWakeLock;
-
-        public DownloadFilesTask(Context context) {
-            this.context = context;
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case progress_bar_type:
+                pDialog = new ProgressDialog(this);
+                pDialog.setMessage("Downloading file. Please wait...");
+                pDialog.setIndeterminate(false);
+                pDialog.setMax(100);
+                pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                pDialog.setCancelable(true);
+                pDialog.show();
+                return pDialog;
+            default:
+                return null;
         }
+    }
+
+    class DownloadFileFromURL extends AsyncTask<String, String, String> {
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
-            PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-            mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getClass().getName());
-            mWakeLock.acquire();
-
-            progressBar.show();
+            showDialog(progress_bar_type);
         }
 
         @Override
-        protected Long doInBackground(String... string_url) {
+        protected String doInBackground(String... f_url) {
             int count;
-            long FileSize = -1;
-            InputStream input = null;
-            OutputStream output = null;
-            URLConnection connection = null;
-
             try {
-                URL url = new URL(string_url[0]);
-                connection = url.openConnection();
+                URL url = new URL(f_url[0]);
+                URLConnection connection = url.openConnection();
                 connection.connect();
 
-                FileSize = connection.getContentLength();
+                int lengthOfFile = connection.getContentLength();
 
-                input = new BufferedInputStream(url.openStream(), 81920);
+                // 파일 다운로드
+                InputStream input = new BufferedInputStream(url.openStream(), 8192);
 
-                filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                outputFile = new File(filePath, "finish.mp4"); //파일명까지 포함함 경로의 File 객체 생성
+                // 저장될 파일
+                OutputStream output = new FileOutputStream(Environment
+                        .getExternalStorageDirectory().toString()
+                        + "/DCIM/Camera/video_" + System.currentTimeMillis() +".mp4");
 
-                // SD카드에 저장하기 위한 Output stream
-                output = new FileOutputStream(outputFile);
+                byte data[] = new byte[1024*1024];
 
-
-                byte data[] = new byte[1024];
-                long downloadedSize = 0;
+                long total = 0;
 
                 while ((count = input.read(data)) != -1) {
-                    //사용자가 BACK 버튼 누르면 취소가능
-                    if (isCancelled()) {
-                        input.close();
-                        return Long.valueOf(-1);
-                    }
+                    total += count;
+                    publishProgress("" + (int) ((total * 100) / lengthOfFile));
 
-                    downloadedSize += count;
-
-                    if (FileSize > 0) {
-                        float per = ((float) downloadedSize / FileSize) * 100;
-                        String str = "Downloaded " + downloadedSize + "KB / " + FileSize + "KB (" + (int) per + "%)";
-                        publishProgress("" + (int) ((downloadedSize * 100) / FileSize), str);
-
-                    }
-
-                    //파일에 데이터를 기록합니다.
                     output.write(data, 0, count);
                 }
 
-                // Flush output
                 output.flush();
 
-                // Close streams
                 output.close();
                 input.close();
 
 
             } catch (Exception e) {
-                Log.e("error : ", e.getMessage());
-            } finally {
-                try {
-                    if (output != null)
-                        output.close();
-                    if (input != null)
-                        input.close();
-                } catch (IOException ignored) {
-                }
-                mWakeLock.release();
+                Log.e("Error: ", e.getMessage());
             }
 
-            return FileSize;
+            return null;
+        }
+
+        protected void onProgressUpdate(String... progress) {
+            // setting progress percentage
+            pDialog.setProgress(Integer.parseInt(progress[0]));
         }
 
         @Override
-        protected void onProgressUpdate(String... progress) { //4
-            super.onProgressUpdate(progress);
+        protected void onPostExecute(String file_url) {
+            // dismiss the dialog after the file was downloaded
+            dismissDialog(progress_bar_type);
+            Toast toast = Toast.makeText(getApplicationContext(), "다운로드가 완료되었습니다.", Toast.LENGTH_SHORT); toast.show();
 
-            // if we get here, length is known, now set indeterminate to false
-            progressBar.setIndeterminate(false);
-            progressBar.setMax(100);
-            progressBar.setProgress(Integer.parseInt(progress[0]));
-            progressBar.setMessage(progress[1]);
+
         }
-
-        @Override
-        protected void onPostExecute(Long size) { //5
-            super.onPostExecute(size);
-
-            progressBar.dismiss();
-
-            if ( size > 0) {
-                Toast.makeText(getApplicationContext(), "다운로드 완료되었습니다. 파일 크기=" + size.toString(), Toast.LENGTH_LONG).show();
-
-                Intent mediaScanIntent = new Intent( Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                mediaScanIntent.setData(Uri.fromFile(outputFile));
-                sendBroadcast(mediaScanIntent);
-
-//                playVideo(outputFile.getPath());
-
-            }
-            else
-                Toast.makeText(getApplicationContext(), "다운로드 에러", Toast.LENGTH_LONG).show();
-        }
-
-
     }
-
-
-//        downloadTask.execute("http://52.79.176.116/outputs/finalvideo.mp4");
 
 
     @Override
