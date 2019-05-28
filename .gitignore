@@ -2,3 +2,11 @@
 src/model-weights/logo.h5
 src/model-weights/face16000.weights
 src/model-weights/face.h5
+*.pyc
+*.mp4
+src/template.py
+src/template.py
+src/server_receive.py
+src/client_sending.py
+src/template.py
+src/template.py

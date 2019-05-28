@@ -6,7 +6,6 @@ from os import path
 from yolo.yoloTracingRe import YOLO, detect_video, letterbox_image
 from PIL import Image 
 
-import shutil
 import face_recognition
 import os
 import datetime
@@ -24,6 +23,8 @@ from moviepy.config import get_setting
 import pdb
 import argparse
 
+import client_sending
+import server_receive
 
 class f_setting:
     model = 'model-weights/face.h5'
@@ -49,20 +50,6 @@ def fileupload():
     entry1.delete(0, END)
     entry1.insert(0, filename)
     entry1.config(state="readonly")
-
-def faceupload():
-    filename = askopenfilename(parent=window,title = "Select input File",
-                               filetypes = (("jpeg files","*.jpg"),("video files","*.mp4 *.avi"),("all files","*.*")),
-                               initialdir=path.dirname(__file__))
-    shutil.copy(filename, './face_except/'+os.path.basename(filename))
-    msg.showinfo('Process', 'upload completed')
-
-def saveresult():
-    a=asksaveasfilename(title='save final file', initialfile='final', filetypes=(('image files','*.jpg'),('video files','*.mp4'),('all files', '*.*')))
-    if a:                
-        shutil.copy('./outputs/finalvideo.mp4', a+'.mp4')
-    msg.showinfo('Process', 'Result transfered')
-                
 
 def quit():
     window.quit()
@@ -143,6 +130,7 @@ def ffmpeg_resize(video,output,size):
     subprocess_call(cmd)
 
 
+####################################################################################
 
 def convert():
     now = datetime.datetime.now()
@@ -152,33 +140,13 @@ def convert():
         else:
             FLAGS.input=entry1.get()
             detect_img(YOLO2(**vars(FLAGS)))
-        msg.showinfo('Process', 'Output file is stored at outputs/final.jpg')
     elif typeradio.get()==2:
         if optionradio.get()==1:
-            fset=f_setting()
-            fset.model='model-weights/face.h5'
-            fset.classes = 'cfg/face_classes.txt'
-            fset.anchors = 'cfg/yolo_anchors(face).txt'
-            fset.video=entry1.get()
-            detect_video(YOLO(fset), fset.video, fset.output)
-
-            # 음성 추출 extract the sound from a video file and save it in output
-
-            inputfile=fset.video
-            output='outputs/outAudio.mp3'
-            ffmpeg_extract_audio(inputfile, output, bitrate=3000, fps=44100)
-
-            audio='outputs/outAudio.mp3'
-            video='outputs/output_video.avi'
-            outputfinal='outputs/finalvideo.mp4'
-            # merges video file video and audio file audio into one movie file output.
-
-            ffmpeg_merge_video_audio(video, audio, outputfinal, vcodec='copy', acodec='copy', ffmpeg_output=False, verbose=True)
+            client_sending('121.128.211.160', entry1.get())
         else:
             FLAGS.input=entry1.get()
-            blur_video(YOLO2(**vars(FLAGS)), entry1.get(), "outputs")
-            
-        msg.showinfo('Process', 'Output file is stored at outputs/finalvideo.mp4')
+            blur_video(YOLO2(**vars(FLAGS)), entry1.get(), "outputs")            
+
             
     elif typeradio.get()==3:
         if optionradio.get()==1:
@@ -204,7 +172,31 @@ def convert():
         else:
             blur_webcam(YOLO2(**vars(FLAGS)))
                     
-##########################################
+####################################################################################
+def getFileFromServer(filename):
+    data_transferred = 0 
+
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.connect((HOST,PORT))
+        sock.sendall(filename.encode()) 
+
+        data = sock.recv(1024)
+        if not data:
+            print('파일[%s]: 서버에 존재하지 않거나 전송중 오류발생' %filename)
+            return 
+
+        with open(filename, 'wb') as f:
+            try:
+                while  data:
+                    f.write(data)
+                    data_transferred += len(data)
+                    data = sock.recv(1024)
+            except Exception as e:
+                print(e) 
+
+    print('파일[%s] 전송종료. 전송량 [%d]' %(filename, data_transferred)) 
+
+####################################################################################
 parser = argparse.ArgumentParser(argument_default=argparse.SUPPRESS)
 '''
 Command line options
@@ -264,9 +256,7 @@ menubar=Menu(window)
 window.config(menu=menubar)
 
 filemenu=Menu(menubar,tearoff=0)
-filemenu.add_command(label="Face Upload", command=faceupload)
-filemenu.add_separator()
-filemenu.add_command(label="Save Result", command=saveresult)
+filemenu.add_command(label="File Upload", command=fileupload)
 filemenu.add_separator()
 filemenu.add_command(label="Exit", command=quit)
 
