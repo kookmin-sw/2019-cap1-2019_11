@@ -4,9 +4,11 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +16,7 @@ import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.Button;
+import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -28,6 +31,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private Button buttonVideo; //카메라 실행
     private Button buttonUploadPhoto; // 업로드 버튼
     private VideoView video_preview_main; //미리보기
+    private TextView textView_video;
     private TextView textViewResponse;
 
     private static final int VIDEO_REQUEST = 101;
@@ -44,23 +48,23 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         buttonVideo = (Button) findViewById(R.id.buttonVideo);
         buttonUploadPhoto = (Button) findViewById(R.id.buttonUploadPhoto);
         video_preview_main = (VideoView) findViewById(R.id.video_preview_main);
+        textView_video = (TextView) findViewById(R.id.textView_video);
         textViewResponse = (TextView) findViewById(R.id.textViewResponse);
 
         buttonVideo.setOnClickListener(this);
         buttonUploadPhoto.setOnClickListener(this);
 
 
-        //권한체크
-        TedPermission.with(getApplicationContext())
-                .setRationaleMessage("카메라 권한이 필요합니다.") //카메라 권한을 거부했을 때
-                .setPermissionListener(permission)
-                .setDeniedMessage("거부하였습니다. 설정 > 권한에서 허용해주세요.")
-                .setPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO)
-                .check();
-
         findViewById(R.id.buttonVideo).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //권한체크
+                TedPermission.with(getApplicationContext())
+                        .setRationaleMessage("카메라 권한이 필요합니다.") //카메라 권한을 거부했을 때
+                        .setPermissionListener(permission)
+                        .setDeniedMessage("거부하였습니다. 설정 > 권한에서 허용해주세요.")
+                        .setPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO)
+                        .check();
                 Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 
                 if (intent.resolveActivity(getPackageManager()) != null){
@@ -69,17 +73,51 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             }
         });
 
-        //비디오 재생
-        //Uri videoUri = Uri.parse(getIntent().getExtras().getString("videoUri"));
-        video_preview_main.setVideoURI(videoUri);
-        video_preview_main.start();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == VIDEO_REQUEST && resultCode == RESULT_OK){
             videoUri = data.getData();
+            System.out.println("RECORDING_VIDEO");
+            Uri selectedImageUri = data.getData();
+            selectedPath = getPath(selectedImageUri);
+            textView_video.setText("동영상이 선택되었습니다.");
         }
+
+        MediaController mc = new MediaController(this);
+        video_preview_main.setMediaController(mc); // Video View 에 사용할 컨트롤러 지정
+
+        String path = Environment.getExternalStorageDirectory()
+                .getAbsolutePath(); // 기본적인 절대경로 얻어오기
+
+
+        // 절대 경로 = SDCard 폴더 = "stroage/emulated/0"
+        //          ** 이 경로는 폰마다 다를수 있습니다.**
+        // 외부메모리의 파일에 접근하기 위한 권한이 필요 AndroidManifest.xml에 등록
+
+        video_preview_main.setVideoPath(""+selectedPath);
+        // VideoView 로 재생할 영상
+        // 아까 동영상 [상세정보] 에서 확인한 경로
+        video_preview_main.requestFocus(); // 포커스 얻어오기
+        video_preview_main.start(); // 동영상 재생
+    }
+
+    public String getPath(Uri uri) {
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        String document_id = cursor.getString(0);
+        document_id = document_id.substring(document_id.lastIndexOf(":") + 1);
+        cursor.close();
+
+        cursor = getContentResolver().query(
+                android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                null, MediaStore.Video.Media._ID + " = ? ", new String[]{document_id}, null);
+        cursor.moveToFirst();
+        String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+        cursor.close();
+
+        return path;
     }
 
 

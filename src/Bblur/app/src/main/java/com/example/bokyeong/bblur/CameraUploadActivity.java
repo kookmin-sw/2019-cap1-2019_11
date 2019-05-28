@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -14,10 +15,10 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -29,6 +30,7 @@ import com.gun0912.tedpermission.TedPermission;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,13 +39,13 @@ public class CameraUploadActivity extends AppCompatActivity implements View.OnCl
 
     private Button buttonCamera; //카메라 실행
     private Button buttonUploadPhoto; // 업로드 버튼
-    private View camera_preview_main; //미리보기
+    private ImageView camera_preview_main; //미리보기
     private TextView textViewResponse;
     private TextView texView_camera;
 
     private static final int REQEST_IMAGE_CAPTURE = 672;
     private String imageFilePath;
-    private Uri photoUri;
+    //private Uri photoUri;
 
     private  String selectedPath;
 
@@ -55,63 +57,68 @@ public class CameraUploadActivity extends AppCompatActivity implements View.OnCl
         buttonCamera = (Button) findViewById(R.id.buttonCamera);
         buttonUploadPhoto = (Button) findViewById(R.id.buttonUploadPhoto);
 
-        camera_preview_main = (View) findViewById(R.id.camera_preview_main);
+        camera_preview_main = (ImageView) findViewById(R.id.camera_preview_main);
         texView_camera = (TextView) findViewById(R.id.textView_camera);
         textViewResponse = (TextView) findViewById(R.id.textViewResponse);
 
-        //buttonCamera.setOnClickListener(this);
         buttonUploadPhoto.setOnClickListener(this);
 
-        //권한체크
-        TedPermission.with(getApplicationContext())
-                .setRationaleMessage("카메라 권한이 필요합니다.")
-                .setPermissionListener(permissionListener)
-                .setDeniedMessage("거부하였습니다.")   //카메라 권한을 거부했을 때
-                .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
-                .check();
+
 
         findViewById(R.id.buttonCamera).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //권한체크
+                TedPermission.with(getApplicationContext())
+                        .setRationaleMessage("카메라 권한이 필요합니다.")
+                        .setPermissionListener(permissionListener)
+                        .setDeniedMessage("거부하였습니다.")   //카메라 권한을 거부했을 때
+                        .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
+                        .check();
+
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    File photofile = null;
-                    try{
-                        photofile = createImageFile();
-                    }catch (IOException e) {
-
-                    }
-
-                    if (photofile != null) {
-                        photoUri = FileProvider.getUriForFile(getApplicationContext(), getPackageName(), photofile);
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-                        startActivityForResult(intent, REQEST_IMAGE_CAPTURE);
-                        //다음화면으로 전환 시 데이터를 가지고 와줌
-                        /*
-                        Uri selectedImageUri = photofile.getData();
-                        selectedPath = getPath(selectedImageUri);
-                        texView_camera.setText(selectedPath);
-                        */
-                    }
-                }
+                startActivityForResult(intent, REQEST_IMAGE_CAPTURE);
 
             }
         });
     }
 
     /*
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            if (requestCode == SELECT_PHOTO) {
-                System.out.println("SELECT_PHOTO");
+            if (requestCode == REQEST_IMAGE_CAPTURE) {
+                System.out.println("REQEST_IMAGE_CAPTURE@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
                 Uri selectedImageUri = data.getData();
                 selectedPath = getPath(selectedImageUri);
-                textView.setText(selectedPath);
+                texView_camera.setText(selectedPath);
             }
         }
-    }
+    }*/
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(requestCode == REQEST_IMAGE_CAPTURE && resultCode == RESULT_OK){
+
+            Uri selectedImageUri = data.getData();
+            selectedPath = getPath(selectedImageUri);
+            texView_camera.setText("사진이 선택되었습니다.");
+            try {
+                //선택한 이미지에서 비트맵 생성
+                InputStream inputStream = getContentResolver().openInputStream(data.getData());
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                inputStream.close();
+
+                //이미지 표시
+                camera_preview_main.setImageBitmap(bitmap);
+                Log.d("1111","@@@@@@@@@@22");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
 
 
     public String getPath(Uri uri) {
@@ -129,7 +136,7 @@ public class CameraUploadActivity extends AppCompatActivity implements View.OnCl
         cursor.close();
 
         return path;
-    }*/
+    }
 
 
     private void uploadPhoto() {
@@ -188,30 +195,6 @@ public class CameraUploadActivity extends AppCompatActivity implements View.OnCl
         return image;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(requestCode == REQEST_IMAGE_CAPTURE && resultCode == RESULT_OK){
-            Bitmap bitmap = BitmapFactory.decodeFile(imageFilePath);
-            ExifInterface exif = null;
-            try{
-                exif = new ExifInterface(imageFilePath);
-            }catch (IOException e){
-                e.printStackTrace();
-            }
-
-            int exifOrientation;
-            int exifDegree;
-
-            if (exif != null) {
-                exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-                exifDegree = exifOrientationToDegree(exifOrientation);
-            }else {
-                exifDegree = 0;
-            }
-
-            ((ImageView) findViewById(R.id.camera_preview_main )).setImageBitmap(rotate(bitmap,exifDegree));
-        }
-    }
 
     private int exifOrientationToDegree(int exifOrientation){
         if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90){
