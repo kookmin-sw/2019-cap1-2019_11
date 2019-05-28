@@ -11,3 +11,9 @@ src/outputs/finalvideo.mp4
 src/server_receive.py
 src/yolo/__pycache__/yoloTracing.cpython-35.pyc
 src/yolo/__pycache__/yoloTracingRe.cpython-35.pyc
+application/model-weights/logo.h5
+application/model-weights/face.h5
+application/model-weights/face16000.weights
+gui/model-weights/face.h5
+gui/model-weights/logo.h5
+gui/model-weights/face16000.weights

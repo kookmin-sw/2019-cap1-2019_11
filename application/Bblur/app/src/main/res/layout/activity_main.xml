@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#e8f0f8"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+
+    <TextView
+        android:layout_width="500dp"
+        android:layout_height="200dp"
+        android:fontFamily="@font/tvnbold"
+        android:text="BBlur!"
+        android:textAlignment="center"
+        android:textSize="160dp"
+        />
+
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="90dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="172dp">
+
+        <Button
+            android:id="@+id/buttonGoCamera"
+            android:layout_width="120dp"
+            android:layout_height="80dp"
+            android:background="#dbebf0"
+            android:fontFamily="@font/tvnbold"
+            android:text="카메라 실행"
+            android:textSize="25dp" />
+
+        <Button
+            android:id="@+id/buttonGoVideo"
+            android:layout_width="120dp"
+            android:layout_height="80dp"
+            android:layout_below="@+id/buttonGoCamera"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="60dp"
+            android:background="#dbebf0"
+            android:fontFamily="@font/tvnbold"
+            android:text="동영상 실행"
+            android:textSize="25dp" />
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="90dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="70dp">
+
+        <Button
+            android:id="@+id/buttonPhotoUpload"
+            android:layout_width="120dp"
+            android:layout_height="80dp"
+            android:layout_below="@+id/buttonMyUpload"
+            android:background="#dbebf0"
+            android:fontFamily="@font/tvnbold"
+            android:text="편집할 사진 \n 업로드"
+            android:textSize="25dp" />
+
+        <Button
+            android:id="@+id/buttonMyUpload"
+            android:layout_width="120dp"
+            android:layout_height="80dp"
+            android:layout_below="@+id/buttonGoVideo"
+            android:layout_marginLeft="60dp"
+            android:background="#dbebf0"
+            android:fontFamily="@font/tvnbold"
+            android:text="편집할 동영상\n업로드"
+            android:textSize="25dp" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true">
+
+        <Button
+            android:id="@+id/buttonFaceUpload"
+            android:layout_width="200dp"
+            android:layout_height="60dp"
+            android:layout_below="@+id/buttonPhotoUpload"
+            android:layout_centerHorizontal="true"
+            android:background="#6dadc5"
+            android:fontFamily="@font/tvnbold"
+            android:text="블러처리 제거 대상"
+            android:textSize="27dp" />
+    </LinearLayout>
+
+</RelativeLayout>
