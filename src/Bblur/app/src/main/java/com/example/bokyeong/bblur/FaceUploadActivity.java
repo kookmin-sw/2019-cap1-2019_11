@@ -1,7 +1,6 @@
 package com.example.bokyeong.bblur;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
@@ -26,6 +25,7 @@ public class FaceUploadActivity extends AppCompatActivity implements View.OnClic
     private Button buttonUploadPhoto; // 업로드 버튼
     private TextView textView;
     private TextView textViewResponse;
+    private Button buttonDelete;
     private ImageView myface_preview_main; //사진 미리보기
 
     private static final int SELECT_PHOTO = 3;
@@ -39,6 +39,7 @@ public class FaceUploadActivity extends AppCompatActivity implements View.OnClic
 
         buttonChoosePhoto = (Button) findViewById(R.id.buttonChoosePhoto);
         buttonUploadPhoto = (Button) findViewById(R.id.buttonUploadPhoto);
+        buttonDelete = (Button) findViewById(R.id.buttonDelete);
 
         textView = (TextView) findViewById(R.id.textView);
         textViewResponse = (TextView) findViewById(R.id.textViewResponse);
@@ -46,6 +47,7 @@ public class FaceUploadActivity extends AppCompatActivity implements View.OnClic
 
         buttonChoosePhoto.setOnClickListener(this);
         buttonUploadPhoto.setOnClickListener(this);
+        buttonDelete.setOnClickListener(this);
     }
 
     private void chooseVideo() {
@@ -62,8 +64,6 @@ public class FaceUploadActivity extends AppCompatActivity implements View.OnClic
                 System.out.println("SELECT_PHOTO");
                 Uri selectedImageUri = data.getData();
                 selectedPath = getPath(selectedImageUri);
-                textView.setText("사진이 선택되었습니다.");
-
                 try {
                     //선택한 이미지에서 비트맵 생성
                     InputStream inputStream = getContentResolver().openInputStream(data.getData());
@@ -141,7 +141,46 @@ public class FaceUploadActivity extends AppCompatActivity implements View.OnClic
     }
 
 
-    @Override
+    private void deletePhoto() {
+        class DeletePhoto extends AsyncTask<Void, Void, String> {
+
+            ProgressDialog deleting;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                deleting = ProgressDialog.show(FaceUploadActivity.this, "Uploading File", "Please wait...", false, false);
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                deleting.dismiss();
+                Toast.makeText(getApplicationContext(), "모든 제외 대상 사진이 삭제되었습니다." , Toast.LENGTH_LONG).show();
+
+            }
+
+            @Override
+            protected String doInBackground(Void... params) {
+                Delete u = new Delete();
+                String msg = u.deletePhoto();
+                return msg;
+
+            }
+        }
+        DeletePhoto uv = new DeletePhoto();
+        uv.execute();
+
+
+    }
+
+
+
+
+
+
+
+        @Override
     public void onClick(View v) {
         if (v == buttonChoosePhoto) {
             chooseVideo();
@@ -151,5 +190,8 @@ public class FaceUploadActivity extends AppCompatActivity implements View.OnClic
             uploadPhoto();
         }
 
+        if (v == buttonDelete){
+            deletePhoto();
+        }
     }
 }
