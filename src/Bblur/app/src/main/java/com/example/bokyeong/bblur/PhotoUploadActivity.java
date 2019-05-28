@@ -13,19 +13,19 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -34,8 +34,6 @@ public class PhotoUploadActivity extends AppCompatActivity implements View.OnCli
     private Button buttonChoosePhoto; // 사진 선택 버튼
     private Button buttonUploadPhoto; // 업로드 버튼
     private Button buttonDownloadPhoto;
-    private TextView textView;
-    private TextView textViewResponse;
     private ImageView photo_preview_main; //사진 미리보기
 
     private static final int SELECT_PHOTO = 3;
@@ -44,6 +42,8 @@ public class PhotoUploadActivity extends AppCompatActivity implements View.OnCli
 
     private ProgressDialog pDialog;
     public static final int progress_bar_type = 0;
+
+    Bitmap bitmap;
 
 
     @Override
@@ -55,8 +55,6 @@ public class PhotoUploadActivity extends AppCompatActivity implements View.OnCli
         buttonUploadPhoto = (Button) findViewById(R.id.buttonUploadPhoto);
         buttonDownloadPhoto = (Button) findViewById(R.id.buttonDownloadPhoto);
 
-        textView = (TextView) findViewById(R.id.textView);
-        textViewResponse = (TextView) findViewById(R.id.textViewResponse);
         photo_preview_main = (ImageView) findViewById(R.id.photo_preview_main);
 
         buttonChoosePhoto.setOnClickListener(this);
@@ -79,7 +77,7 @@ public class PhotoUploadActivity extends AppCompatActivity implements View.OnCli
                 System.out.println("SELECT_PHOTO");
                 Uri selectedImageUri = data.getData();
                 selectedPath = getPath(selectedImageUri);
-                Toast toast = Toast.makeText(getApplicationContext(), "사진이 선택되었습니다. \n 사진 업로드를 진행하세요.", Toast.LENGTH_LONG); toast.show();
+                Toast toast = Toast.makeText(getApplicationContext(), "사진이 선택되었습니다.", Toast.LENGTH_SHORT); toast.show();
 
                 try {
                     //선택한 이미지에서 비트맵 생성
@@ -140,8 +138,37 @@ public class PhotoUploadActivity extends AppCompatActivity implements View.OnCli
                 protected void onPostExecute(String s) {
                     super.onPostExecute(s);
                     uploading.dismiss();
-                    textViewResponse.setText(Html.fromHtml("<b>Uploaded at <a href='" + s + "'>" + s + "</a></b>"));
-                    textViewResponse.setMovementMethod(LinkMovementMethod.getInstance());
+
+                    Thread mThread = new Thread() {
+                        @Override
+                        public void run() {
+                            try {
+                                URL url = new URL("http://52.79.176.116/outputs/final.jpg");
+
+                                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                                conn.setDoInput(true); // 서버 응답 수신
+                                conn.connect();
+
+                                InputStream is = conn.getInputStream();
+                                bitmap = BitmapFactory.decodeStream(is);
+                            } catch (MalformedURLException e) {
+                                e.printStackTrace();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    };
+
+                    mThread.start();
+                    try {
+                        mThread.join();
+                        photo_preview_main.setImageBitmap(bitmap);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+
                 }
 
                 @Override
@@ -206,7 +233,7 @@ public class PhotoUploadActivity extends AppCompatActivity implements View.OnCli
                 // Output stream
                 OutputStream output = new FileOutputStream(Environment
                         .getExternalStorageDirectory().toString()
-                        + "/444.jpg");
+                        + "/DCIM/Camera/img_" + System.currentTimeMillis() +".jpg");
 
                 byte data[] = new byte[1024];
 
@@ -234,21 +261,17 @@ public class PhotoUploadActivity extends AppCompatActivity implements View.OnCli
             return null;
         }
 
-        /**
-         * Updating progress bar
-         * */
         protected void onProgressUpdate(String... progress) {
             // setting progress percentage
             pDialog.setProgress(Integer.parseInt(progress[0]));
         }
 
-        /**
-         * After completing background task Dismiss the progress dialog
-         * **/
         @Override
         protected void onPostExecute(String file_url) {
             // dismiss the dialog after the file was downloaded
             dismissDialog(progress_bar_type);
+            Toast toast = Toast.makeText(getApplicationContext(), "다운로드가 완료되었습니다.", Toast.LENGTH_SHORT); toast.show();
+
 
         }
     }
