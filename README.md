@@ -81,6 +81,4 @@ Recognizing this problem, we provide a function to detect for brand logo in imag
 
 소스코드제출시 설치법이나 사용법을 작성하세요.
 
-## 6. 기타
 
-추가적인 내용은 자유롭게 작성하세요.
