@@ -149,7 +149,7 @@ public class FaceUploadActivity extends AppCompatActivity implements View.OnClic
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                deleting = ProgressDialog.show(FaceUploadActivity.this, "Uploading File", "Please wait...", false, false);
+                deleting = ProgressDialog.show(FaceUploadActivity.this, "Deleting File", "Please wait...", false, false);
             }
 
             @Override
