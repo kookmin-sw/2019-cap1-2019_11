@@ -20,7 +20,7 @@ Recognizing this problem, we provide a function to detect for brand logo in imag
 
 ## 3. 소개 영상
 
- [![Video Label](https://img.youtube.com/vi/https://youtu.be/ltxJV9sRjQY/0.jpg)](https://youtu.be/ltxJV9sRjQY)
+ [![Video Label](https://img.youtube.com/vi/ltxJV9sRjQY/0.jpg)](https://youtu.be/ltxJV9sRjQY)
 
 
 ## 4. 팀 소개
