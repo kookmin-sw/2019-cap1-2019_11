@@ -14,3 +14,6 @@ src/yolo/__pycache__/yoloTracingRe.cpython-35.pyc
 application/model-weights/logo.h5
 application/model-weights/face.h5
 application/model-weights/face16000.weights
+gui/model-weights/face.h5
+gui/model-weights/logo.h5
+gui/model-weights/face16000.weights
