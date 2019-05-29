@@ -142,10 +142,9 @@ def convert():
             detect_img(YOLO2(**vars(FLAGS)))
     elif typeradio.get()==2:
         if optionradio.get()==1:
-            client_sending('121.128.211.160', entry1.get())
+            os.system(upload.php)
         else:
-            FLAGS.input=entry1.get()
-            blur_video(YOLO2(**vars(FLAGS)), entry1.get(), "outputs")            
+            os.system(upload2.php)           
 
             
     elif typeradio.get()==3:
