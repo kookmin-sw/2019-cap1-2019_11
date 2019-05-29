@@ -142,9 +142,9 @@ def convert():
             detect_img(YOLO2(**vars(FLAGS)))
     elif typeradio.get()==2:
         if optionradio.get()==1:
-            os.system(upload.php)
+            os.system('php upload.php')
         else:
-            os.system(upload2.php)           
+            os.system('php upload2.php')           
 
             
     elif typeradio.get()==3:
