@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 import camera
 import datetime
@@ -165,13 +164,14 @@ class YOLO(object):
             top = max(0, np.floor(top + 0.5).astype('int32'))-int(tmpTop)
             left = max(0, np.floor(left + 0.5).astype('int32'))
             bottom = min(image.size[1], np.floor(bottom + 0.5).astype('int32'))+int(tmpBottom)
-            # bottom = min(image.size[1], np.floor(bottom + 0.5).astype('int32'))
+                # bottom = min(image.size[1], np.floor(bottom + 0.5).astype('int32'))
             right = min(image.size[0], np.floor(right + 0.5).astype('int32'))+int(tmpRight)
 
 
             final_boxes.append([top,right,bottom,left])
             print('top : ', top*4,' right : ', right*4,' bottom : ', bottom*4, ' left : ',left*4)
             # for thk in range(thickness):
+            #     print('pp')
             #     draw.rectangle(
             #         [left + thk, top + thk, right - thk, bottom - thk],
             #         outline=(51, 178, 255))
@@ -315,7 +315,7 @@ def detect_video(model, video_path=None, output=None):
                             # tolerance: How much distance between faces to consider it a match. Lower is more strict.
                             # 0.6 is typical best performance.
                             name = "Unknown"
-                            if min_value < 0.4:
+                            if min_value < 0.43:
                                 index = np.argmin(distances)
                                 name = model.known_face_names[index]
 
@@ -341,19 +341,21 @@ def detect_video(model, video_path=None, output=None):
                     ### GaussianBlur 방식
 
                     if name == 'Unknown':
-                        left=int(left*1.01)
-                        right=int(right*0.96)
-                        top=int(top*1.05)
-                        bottom=int(bottom*0.96)
 
-                       # Extract the region of the image that contains the face
-                        face_image = frame[top:bottom, left:right]
 
-                        # Blur the face image
+                        le=int(left*1.01)
+                        ri=int(right*0.96)
+                        to=int(top*1.05)
+                        bo=int(bottom*0.96)
+
+                            # Extract the region of the image that contains the face
+                        face_image = frame[to:bo, le:ri]
+
+                            # Blur the face image
                         face_image = cv2.GaussianBlur(face_image, (33, 33), 30)
                         # face_image = cv2.medianBlur(face_image,9)
                         # Put the blurred face region back into the frame image
-                        frame[top:bottom, left:right] = face_image
+                        frame[to:bo, le:ri] = face_image
 
                         unKnown_box.append([top,right,bottom,left])
                     else :
@@ -365,7 +367,7 @@ def detect_video(model, video_path=None, output=None):
                             width=right-left
                             height=bottom-top
                             # rect=(int(0.95*left),int(top*0.95),int(width*1.15),int(height*1.15))
-                            rect=(int(0.97*left),int(top*0.95),int(width*1.15),int(height*1.17))
+                            rect=(int(0.96*left),int(top*0.93),int(width*1.15),int(height*1.17))
                             # rect=(top,left,bottom,right)
                             # trackers.init(frame,rect)
                             trackers.add(cv2.TrackerKCF_create(),frame,rect)
@@ -403,7 +405,7 @@ def detect_video(model, video_path=None, output=None):
                                 print('===================asdasdasd===================')
                                 width=right-left
                                 height=bottom-top
-                                rect=(int(0.97*left),int(top*0.95),int(width*1.15),int(height*1.17))
+                                rect=(int(0.96*left),int(top*0.93),int(width*1.15),int(height*1.17))
                                 # rect=(int(0.95*left),int(top*0.95),int(width*1.15),int(height*1.15))
                                 # rect=(top,left,bottom,right)
                                 # trackers.init(frame,rect)
@@ -481,13 +483,27 @@ def detect_video(model, video_path=None, output=None):
                         trackers = cv2.MultiTracker_create()
 
                 for (top,right,bottom,left) in unKnown_box:
-                    face_image = frame[top:bottom, left:right]
+                    # face_image = frame[top:bottom, left:right]
+                    #
+                    # # Blur the face image
+                    # face_image = cv2.GaussianBlur(face_image, (33, 33), 30)
+                    #
+                    # # Put the blurred face region back into the frame image
+                    # frame[top:bottom, left:right] = face_image
+
+                    le=int(left*1.01)
+                    ri=int(right*0.96)
+                    to=int(top*1.05)
+                    bo=int(bottom*0.96)
+
+                    # Extract the region of the image that contains the face
+                    face_image = frame[to:bo, le:ri]
 
                     # Blur the face image
                     face_image = cv2.GaussianBlur(face_image, (33, 33), 30)
-
+                    # face_image = cv2.medianBlur(face_image,9)
                     # Put the blurred face region back into the frame image
-                    frame[top:bottom, left:right] = face_image
+                    frame[to:bo, le:ri] = face_image
 
                     # cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
 
