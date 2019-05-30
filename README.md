@@ -39,7 +39,7 @@ Recognizing this problem, we provide a function to detect for brand logo in imag
 * 김 용 욱 (팀장)
 * Tel: 010-2934-9007
 * Github: [https://github.com/Kim-yonguk](https://github.com/Kim-yonguk)
-* Role :  Team Management , Object detection모델 연구와 사용 및 웹 개발
+* Role :  Team Management , Object detection 모델 연구와 사용 및 영상처리
 ```
 <img src =./pic/대희.jpeg width="20%" height="20%">
 
@@ -47,7 +47,7 @@ Recognizing this problem, we provide a function to detect for brand logo in imag
 * 김 대 희 (팀원)
 * Tel: 010-6788-5132
 * Github: [https://github.com/dnap512](https://github.com/dnap512)
-* Role : Object detection 모델 연구와 사용 및 웹 개발
+* Role : Object detection 모델 연구와 사용 및 영상처리
 ```
 <img src =./pic/보경.jpeg width="20%" height="20%">
 
@@ -55,7 +55,7 @@ Recognizing this problem, we provide a function to detect for brand logo in imag
 * 권 보 경 (팀원)
 * Tel: 010-6282-1602
 * Github: [https://github.com/bokyeung](https://github.com/bokyeung)
-* Role : 어플리케이션 및 서버 개발
+* Role : 모바일 어플리케이션 개발
 ```
 <img src =./pic/나영.jpeg width="20%" height="20%">
 
@@ -63,14 +63,14 @@ Recognizing this problem, we provide a function to detect for brand logo in imag
 * 이 나 영 (팀원)
 * Tel: 010-9745-9767
 * Github: [https://github.com/bokiri409](https://github.com/bokiri409)
-* Role :  어플리케이션 및 서버 개발
+* Role :  모바일 어플리케이션 개발
 ```
 <img src =./pic/승훈.jpeg width="20%" height="20%">
 
 ```
 * 채 승 훈 (팀원)
 * Tel: 010-7773-6999
-* Github: [https://github.com/SeunghunChae/opencv](https://github.com/SeunghunChae/opencv)
+* Github: [https://github.com/SeunghunChae/opencv](https://github.com/SeunghunChae)
 * Role :   UX / UI
 ```
 
@@ -79,6 +79,10 @@ Recognizing this problem, we provide a function to detect for brand logo in imag
 
 ## 5. 사용법
 
-소스코드제출시 설치법이나 사용법을 작성하세요.
+[기본 환경]
+Python
+
+[추가 설치 라이브러리]
+[ numpy, tensorflow, keras, cmake, imutils, opencv-python, opencv-contrib-python, dlib, face_recognition, moviepy]
 
 
