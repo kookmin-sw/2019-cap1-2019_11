@@ -169,13 +169,7 @@ class YOLO(object):
 
 
             final_boxes.append([top,right,bottom,left])
-            print('top : ', top*4,' right : ', right*4,' bottom : ', bottom*4, ' left : ',left*4)
-            # for thk in range(thickness):
-            #     print('pp')
-            #     draw.rectangle(
-            #         [left + thk, top + thk, right - thk, bottom - thk],
-            #         outline=(51, 178, 255))
-            # del draw
+            
 
         return image, out_boxes,final_boxes
 
@@ -313,7 +307,7 @@ def detect_video(model, video_path=None, output=None):
                             min_value = min(distances)
 
                             # tolerance: How much distance between faces to consider it a match. Lower is more strict.
-                            # 0.6 is typical best performance.
+                            # 0.45가 적당
                             name = "Unknown"
                             if min_value < 0.43:
                                 index = np.argmin(distances)
@@ -321,15 +315,10 @@ def detect_video(model, video_path=None, output=None):
 
                             model.face_names.append(name)
                             model.face_dist.append(min_value)
-                            print('name = ', name)
-                            print('min_v : ',min_value)
 
                         else:
                             name = "Unknown"
                             model.face_names.append(name)
-                            # model.face_dist.append(min_value)
-                            print('name = ', name)
-                            # print('min_v : ',min_value)
 
 
                 for (top,right,bottom,left), name  in zip(final_boxes, model.face_names):
@@ -363,7 +352,7 @@ def detect_video(model, video_path=None, output=None):
 
 
                         if t_cnt == 0:
-                            print('first init')
+
                             width=right-left
                             height=bottom-top
                             # rect=(int(0.95*left),int(top*0.95),int(width*1.15),int(height*1.15))
@@ -382,7 +371,7 @@ def detect_video(model, video_path=None, output=None):
                             tmpRec=Rectangle(top,left,bottom,right)
                             isIntersection=False
                             for box in boxes:
-                                print('ffff box = ',box)
+
                                 l,t,w,h=box
                                 l=int(l)
                                 t=int(t)
@@ -397,31 +386,23 @@ def detect_video(model, video_path=None, output=None):
                                 rs=area(tmpRec,compareRec)
 
                                 if rs == True :
-                                    print(' intersection ')
+
                                     isIntersection=True
                                     break
 
                             if isIntersection == False:
-                                print('===================asdasdasd===================')
+
                                 width=right-left
                                 height=bottom-top
                                 rect=(int(0.96*left),int(top*0.93),int(width*1.15),int(height*1.17))
-                                # rect=(int(0.95*left),int(top*0.95),int(width*1.15),int(height*1.15))
-                                # rect=(top,left,bottom,right)
-                                # trackers.init(frame,rect)
                                 trackers.add(cv2.TrackerKCF_create(),frame,rect)
 
-                                # 만약 아직 트래킹 시작안했고 맨처음에 여러개의 트래커를 사용할때
+
                                 if check==False:
                                     boxes.append([left,top,width,height])
-                            # 겹치는 면적 구해서 겹치는게 없으면 ㄲ
 
 
-                    # dist_st=str(dist)
 
-                    # cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
-                    font = cv2.FONT_HERSHEY_DUPLEX
-                    # cv2.putText(frame, dist_st, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
                     if video_path == 'stream':
                         cv2.imshow("face", frame)
@@ -443,8 +424,6 @@ def detect_video(model, video_path=None, output=None):
                             frame[t:b, l:r] = t_image
                             os.remove('saveTmp/{0}.jpg'.format(l*t))
 
-
-
                 if isOutput:
                     out.write(frame)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -454,7 +433,6 @@ def detect_video(model, video_path=None, output=None):
             else :
                 if isTracing:
 
-                    # rect=(left,top,width,height) #new
                     success, boxes=trackers.update(frame)
                     if success == True:
                         print('success = ', success)
@@ -473,7 +451,7 @@ def detect_video(model, video_path=None, output=None):
 
                             tracing_image = frame[t:b, l:r]
                             cv2.imwrite('saveTmp/{0}.jpg'.format(l*t),tracing_image)
-                            # cv2.rectangle(frame, (l, t), (r, b), (255, 255, 255), 2)
+
                     else:
                         print('re-init')
                         isTracing=False
@@ -483,31 +461,18 @@ def detect_video(model, video_path=None, output=None):
                         trackers = cv2.MultiTracker_create()
 
                 for (top,right,bottom,left) in unKnown_box:
-                    # face_image = frame[top:bottom, left:right]
-                    #
-                    # # Blur the face image
-                    # face_image = cv2.GaussianBlur(face_image, (33, 33), 30)
-                    #
-                    # # Put the blurred face region back into the frame image
-                    # frame[top:bottom, left:right] = face_image
 
                     le=int(left*1.01)
                     ri=int(right*0.96)
                     to=int(top*1.05)
                     bo=int(bottom*0.96)
 
-                    # Extract the region of the image that contains the face
-                    face_image = frame[to:bo, le:ri]
 
-                    # Blur the face image
+                    face_image = frame[to:bo, le:ri]
                     face_image = cv2.GaussianBlur(face_image, (33, 33), 30)
-                    # face_image = cv2.medianBlur(face_image,9)
-                    # Put the blurred face region back into the frame image
                     frame[to:bo, le:ri] = face_image
 
-                    # cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
 
-                    print('## ## top = ', top, ' left = ',left, ' bottom = ', bottom, 'right = ', right)
 
                     if video_path == 'stream':
                         cv2.imshow("face", frame)
@@ -516,7 +481,6 @@ def detect_video(model, video_path=None, output=None):
                     unKnown_box=[]
 
                 for (top,right,bottom,left) in Known_box:
-                    print('## ## top = ', top, ' left = ',left, ' bottom = ', bottom, 'right = ', right)
 
                     # cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
                     if video_path == 'stream':
