@@ -165,7 +165,7 @@ class YOLO(object):
 
 
             final_boxes.append([top,right,bottom,left])
-            print('top : ', top,' right : ', right,' bottom : ', bottom, ' left : ',left)
+            
             for thk in range(thickness):
                 draw.rectangle(
                     [left + thk, top + thk, right - thk, bottom - thk],
@@ -194,6 +194,8 @@ def letterbox_image(image, size):
 
 
 def detect_video(model, video_path=None, output=None):
+    cv2.namedWindow('face',cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('face', 600,600)
     if video_path == 'stream':
         vid = cv2.VideoCapture(0)
     else:
@@ -218,7 +220,6 @@ def detect_video(model, video_path=None, output=None):
         out = cv2.VideoWriter(os.path.join(output, output_fn), video_fourcc, video_fps, video_size)
 
     while True:
-        # print('read processing')
         ret, frame = vid.read()
         cnt+=1
         if ret:
@@ -231,7 +232,6 @@ def detect_video(model, video_path=None, output=None):
                 image, faces, final_boxes= model.detect_image(image)
 
                 if model.process_this_frame:
-                    # print('process_this_frame')
                     model.face_encodings = face_recognition.face_encodings(rgb_small_frame, final_boxes)
 
                     model.face_names=[]
@@ -242,77 +242,49 @@ def detect_video(model, video_path=None, output=None):
 
                         if not len(distances)==0:
                             min_value = min(distances)
-                            # print('print -----',min_value)
-                            # print('min_v : ',min_value)
                             # tolerance: How much distance between faces to consider it a match. Lower is more strict.
-                            # 0.6 is typical best performance.
+                            # 0.45 정도가 화질 안좋은곳에서 적당
                             name = "Unknown"
-                            if min_value < 0.37:
+                            if min_value < 0.43:
                                 index = np.argmin(distances)
                                 name = model.known_face_names[index]
 
                             model.face_names.append(name)
                             model.face_dist.append(min_value)
-                            print('name = ', name)
-                            print('min_v : ',min_value)
-                            # print('distance = ', distances)
 
                         else:
                             name = "Unknown"
                             model.face_names.append(name)
-                            # model.face_dist.append(min_value)
                             print('name = ', name)
-                            # print('min_v : ',min_value)
-                            # print('distance = ', distances)
 
 
-                # model.process_this_frame=not model.process_this_frame
 
 
-                # for (top,right,bottom,left), name , dist in zip(final_boxes, model.face_names, model.face_dist):
                 for (top,right,bottom,left), name in zip(final_boxes, model.face_names):
 
                     top *= 4
                     right *= 4
                     bottom *= 4
                     left *= 4
-                    ### GaussianBlur 방식
 
                     if name == 'Unknown':
-                       # Extract the region of the image that contains the face
-                        face_image = frame[top:bottom, left:right]
-
+                        le=int(left*1.01)
+                        ri=int(right*0.96)
+                        to=int(top*1.05)
+                        bo=int(bottom*0.96)
                         # Blur the face image
-                        face_image = cv2.GaussianBlur(face_image, (99, 99), 30)
-                        # face_image = cv2.medianBlur(face_image,9)
-                        # Put the blurred face region back into the frame image
-                        frame[top:bottom, left:right] = face_image
+                        face_image = frame[to:bo, le:ri]
+                        face_image = cv2.GaussianBlur(face_image, (33, 33), 30)
+                        frame[to:bo, le:ri] = face_image
+
                         unKnown_box.append([top,right,bottom,left])
 
                     else :
                         Known_box.append([top,right,bottom,left])
-                    ### resize 사용하여 모자이크
-                    # if name == 'Unknown':
-                    #     face_img = frame[top:bottom, left:right]
-                    #     a=(right-left)//30
-                    #     b=(bottom-top)//30
-                    #     if a <= 0 :
-                    #         a=1
-                    #     if b <= 0 :
-                    #         b=1
-                    #     face_img = cv2.resize(face_img, (a, b))
-                    #     face_img = cv2.resize(face_img, (right-left, bottom-top), interpolation=cv2.INTER_AREA)
-                    #
-                    #     frame[top:bottom, left:right]=face_img
-
-                    # dist_st=str(dist)
-
-                    # cv2.rectangle(frame, (left, top), (right, bottom+10), (0, 0, 255), 2)
-                    font = cv2.FONT_HERSHEY_DUPLEX
-                    # cv2.putText(frame, dist_st, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
-
-                    if video_path == 'stream':
-                        cv2.imshow("face", frame)
+                    
+                    
+                if video_path == 'stream':
+                    cv2.imshow("face", frame)
 
                 if isOutput:
                     out.write(frame)
@@ -322,35 +294,27 @@ def detect_video(model, video_path=None, output=None):
 
             else:
                 for (top,right,bottom,left) in unKnown_box:
-                    face_image = frame[top:bottom, left:right]
-
                     # Blur the face image
+                    face_image = frame[top:bottom, left:right]
                     face_image = cv2.GaussianBlur(face_image, (99, 99), 30)
-                    # face_image = cv2.medianBlur(face_image,9)
-                    # Put the blurred face region back into the frame image
                     frame[top:bottom, left:right] = face_image
 
-                    # cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
-
-                    print('## ## top = ', top, ' left = ',left, ' bottom = ', bottom, 'right = ', right)
-                    if video_path == 'stream':
-                        cv2.imshow("face", frame)
+                   
+                   
                 if cnt % 3 == 0 :
                     unKnown_box=[]
 
                 for (top,right,bottom,left) in Known_box:
-                    print('## ## top = ', top, ' left = ',left, ' bottom = ', bottom, 'right = ', right)
-
-                    # cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
+                   
                     if video_path == 'stream':
                         cv2.imshow("face", frame)
 
                 if cnt % 3 == 0 :
                     Known_box=[]
-                if isOutput:
-                    out.write(frame)
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
+            if isOutput:
+                out.write(frame)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
         else:
             break
     vid.release()
