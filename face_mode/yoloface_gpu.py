@@ -1,24 +1,16 @@
 # -*- coding: utf-8 -*-
 import argparse
 
-# from yolo.yolo_md import YOLO, detect_video, letterbox_image
 from yolo.yoloTracingRe import YOLO, detect_video, letterbox_image
-# from yolo.yoloTracing import YOLO, detect_video, letterbox_image
-# from yolo.yolo_md_half import YOLO, detect_video, letterbox_image
 
 import face_recognition
 import os
 import datetime
 import time
 import sys
-# import subprocess as sp
 
 from moviepy.tools import subprocess_call
 from moviepy.config import get_setting
-
-#####################################################################
-
-
 
 
 def ffmpeg_movie_from_frames(filename, folder, fps, digits=6):
