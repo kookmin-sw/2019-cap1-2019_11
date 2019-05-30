@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import argparse
 
-from yolo.yoloTracingRe import YOLO, detect_video, letterbox_image
+from yolo.yoloTracing import YOLO, detect_video, letterbox_image
 
 import face_recognition
 import os
